@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduPortal — Student Registration & Enrollment System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ──────────── LANDING PAGE ──────────── -->
+<div id="page-landing" class="page active">
+
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">◈</span>
+      <span>EduPortal</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" onclick="showSection('features')">Features</a>
+      <a href="#" onclick="showSection('about')">About</a>
+      <button class="btn-outline" onclick="showPage('page-login')">Sign In</button>
+      <button class="btn-primary" onclick="showPage('page-register')">Get Started</button>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Powered by Firebase · GitHub · Vercel</div>
+    <h1 class="hero-title">
+      Smarter<br/>
+      <span class="accent">Enrollment</span><br/>
+      Starts Here.
+    </h1>
+    <p class="hero-sub">A centralized platform for students to register, enroll in courses, and track academic progress — and for administrators to manage everything effortlessly.</p>
+    <div class="hero-cta">
+      <button class="btn-primary large" onclick="showPage('page-register')">Create Student Account</button>
+      <button class="btn-ghost large" onclick="showPage('page-admin-login')">Admin Portal →</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">12K+</span><span class="stat-label">Students</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">340+</span><span class="stat-label">Courses</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">99.9%</span><span class="stat-label">Uptime</span></div>
+    </div>
+  </section>
+
+  <section class="features-strip" id="features">
+    <div class="feature-card">
+      <div class="feat-icon">⚡</div>
+      <h3>Instant Enrollment</h3>
+      <p>Register and enroll in courses in minutes with real-time status tracking.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">🔒</div>
+      <h3>Secure & Role-Based</h3>
+      <p>Firebase Auth with encrypted data and separate student/admin access levels.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">📊</div>
+      <h3>Live Reports</h3>
+      <p>Generate enrollment, capacity, and performance reports on demand.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">🔔</div>
+      <h3>Smart Notifications</h3>
+      <p>Get real-time alerts for enrollment confirmations and course updates.</p>
+    </div>
+  </section>
+
+  <section class="tech-stack">
+    <p class="tech-label">Built & Deployed With</p>
+    <div class="tech-logos">
+      <div class="tech-chip">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </div>
+      <div class="tech-chip">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
+        Vercel
+      </div>
+      <div class="tech-chip">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFA000"><path d="M3.89 15.672L6.255.461A.542.542 0 0 1 7.27.288l2.543 4.771zm16.794 3.692l-2.25-14a.54.54 0 0 0-.919-.295L3.316 19.365l7.856 4.427a1.621 1.621 0 0 0 1.588 0zM14.3 7.147l-1.82-3.482a.542.542 0 0 0-.96 0L3.53 17.984z"/></svg>
+        Firebase
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 EduPortal · Student Registration & Enrollment System · Built with ♥</p>
+  </footer>
+</div>
+
+<!-- ──────────── STUDENT LOGIN ──────────── -->
+<div id="page-login" class="page auth-page">
+  <div class="auth-split">
+    <div class="auth-left">
+      <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
+      <div class="auth-brand">◈ EduPortal</div>
+      <h2>Welcome back</h2>
+      <p class="auth-sub">Sign in to access your courses and enrollment status.</p>
+      <div class="form-group">
+        <label>Student ID or Email</label>
+        <input type="text" id="login-email" placeholder="e.g. STU-2024-001 or name@edu.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter your password"/>
+      </div>
+      <button class="btn-primary full" onclick="doLogin()">Sign In</button>
+      <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('page-register')">Register here</a></p>
+      <div class="divider"><span>or</span></div>
+      <button class="btn-outline full" onclick="showPage('page-admin-login')">Sign in as Administrator</button>
+      <div id="login-error" class="error-msg hidden"></div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-illustration">
+        <div class="circle-big"></div>
+        <div class="circle-sm"></div>
+        <div class="card-float card1">
+          <span class="cf-icon">📚</span>
+          <div><strong>CS401</strong><br/><small>Enrolled</small></div>
+        </div>
+        <div class="card-float card2">
+          <span class="cf-icon">✅</span>
+          <div><strong>Approved</strong><br/><small>2 courses</small></div>
+        </div>
+        <div class="card-float card3">
+          <span class="cf-icon">🔔</span>
+          <div><strong>New update</strong><br/><small>Math101 starts Mon</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── STUDENT REGISTER ──────────── -->
+<div id="page-register" class="page auth-page">
+  <div class="auth-split">
+    <div class="auth-left">
+      <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
+      <div class="auth-brand">◈ EduPortal</div>
+      <h2>Create your account</h2>
+      <p class="auth-sub">Join thousands of students managing their academics online.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="reg-fname" placeholder="Jane"/>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="reg-lname" placeholder="Doe"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Student ID</label>
+        <input type="text" id="reg-sid" placeholder="STU-2024-001"/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="reg-email" placeholder="jane.doe@university.edu"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-pass" placeholder="Min. 8 characters"/>
+      </div>
+      <button class="btn-primary full" onclick="doRegister()">Create Account</button>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('page-login')">Sign in</a></p>
+      <div id="reg-error" class="error-msg hidden"></div>
+    </div>
+    <div class="auth-right dark-right">
+      <div class="checklist-visual">
+        <h3>Why EduPortal?</h3>
+        <ul class="check-list">
+          <li>✓ Register for courses in minutes</li>
+          <li>✓ Real-time enrollment status</li>
+          <li>✓ Instant notifications</li>
+          <li>✓ Secure, encrypted records</li>
+          <li>✓ Available 24/7 on any device</li>
+          <li>✓ No paperwork required</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── ADMIN LOGIN ──────────── -->
+<div id="page-admin-login" class="page auth-page">
+  <div class="auth-split">
+    <div class="auth-left">
+      <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
+      <div class="auth-brand admin-brand">⚙ Admin Portal</div>
+      <h2>Administrator Sign In</h2>
+      <p class="auth-sub">Manage students, courses, enrollments, and reports.</p>
+      <div class="form-group">
+        <label>Admin Email</label>
+        <input type="email" id="admin-email" placeholder="admin@university.edu"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="admin-pass" placeholder="Admin password"/>
+      </div>
+      <p class="hint-text">Demo credentials: admin@edu.com / admin123</p>
+      <button class="btn-admin full" onclick="doAdminLogin()">Sign In as Admin</button>
+      <p class="auth-switch"><a href="#" onclick="showPage('page-login')">← Student Login</a></p>
+      <div id="admin-error" class="error-msg hidden"></div>
+    </div>
+    <div class="auth-right admin-right">
+      <div class="admin-visual">
+        <div class="admin-dash-preview">
+          <div class="adp-row"><span class="adp-dot green"></span> 3 Enrollments Pending</div>
+          <div class="adp-row"><span class="adp-dot blue"></span> 2 New Registrations</div>
+          <div class="adp-row"><span class="adp-dot yellow"></span> CS301 at 90% capacity</div>
+          <div class="adp-row"><span class="adp-dot red"></span> 1 Course Full</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── STUDENT DASHBOARD ──────────── -->
+<div id="page-student-dashboard" class="page dashboard-page">
+  <aside class="sidebar">
+    <div class="sidebar-brand">◈ EduPortal</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="snav active" onclick="showTab('tab-overview','snav')">
+        <span>🏠</span> Overview
+      </a>
+      <a href="#" class="snav" onclick="showTab('tab-courses','snav')">
+        <span>📚</span> Browse Courses
+      </a>
+      <a href="#" class="snav" onclick="showTab('tab-enrollments','snav')">
+        <span>📋</span> My Enrollments
+      </a>
+      <a href="#" class="snav" onclick="showTab('tab-notifications','snav')">
+        <span>🔔</span> Notifications <span class="badge">3</span>
+      </a>
+      <a href="#" class="snav" onclick="showTab('tab-profile','snav')">
+        <span>👤</span> Profile
+      </a>
+    </nav>
+    <button class="sidebar-logout" onclick="logout()">⇠ Logout</button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2 id="student-greeting">Welcome, Student!</h2>
+        <p class="dash-date" id="dash-date"></p>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar" id="student-avatar">JS</div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <span class="kpi-icon">📚</span>
+          <div><div class="kpi-num">4</div><div class="kpi-label">Enrolled Courses</div></div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon">⏳</span>
+          <div><div class="kpi-num">1</div><div class="kpi-label">Pending Approval</div></div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon">✅</span>
+          <div><div class="kpi-num">3</div><div class="kpi-label">Approved</div></div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon">🗓️</span>
+          <div><div class="kpi-num">2025</div><div class="kpi-label">Academic Year</div></div>
+        </div>
+      </div>
+      <div class="section-title">Recent Enrollment Activity</div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <span class="act-status approved">Approved</span>
+          <div class="act-info"><strong>CS401 – Software Engineering</strong><br/><small>Enrolled on Jan 10, 2025</small></div>
+        </div>
+        <div class="activity-item">
+          <span class="act-status pending">Pending</span>
+          <div class="act-info"><strong>MATH301 – Calculus III</strong><br/><small>Submitted Jan 12, 2025</small></div>
+        </div>
+        <div class="activity-item">
+          <span class="act-status approved">Approved</span>
+          <div class="act-info"><strong>ENG201 – Technical Writing</strong><br/><small>Enrolled on Jan 8, 2025</small></div>
+        </div>
+        <div class="activity-item">
+          <span class="act-status approved">Approved</span>
+          <div class="act-info"><strong>PHY101 – Physics I</strong><br/><small>Enrolled on Jan 5, 2025</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BROWSE COURSES TAB -->
+    <div id="tab-courses" class="tab-content">
+      <div class="tab-header">
+        <h3>Available Courses</h3>
+        <input type="text" class="search-input" placeholder="Search courses..." oninput="filterCourses(this.value)"/>
+      </div>
+      <div class="courses-grid" id="courses-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- MY ENROLLMENTS TAB -->
+    <div id="tab-enrollments" class="tab-content">
+      <h3>My Enrollments</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Course</th><th>Code</th><th>Credits</th><th>Status</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Software Engineering</td><td>CS401</td><td>3</td><td><span class="badge-status approved">Approved</span></td><td>Jan 10</td></tr>
+            <tr><td>Calculus III</td><td>MATH301</td><td>4</td><td><span class="badge-status pending">Pending</span></td><td>Jan 12</td></tr>
+            <tr><td>Technical Writing</td><td>ENG201</td><td>2</td><td><span class="badge-status approved">Approved</span></td><td>Jan 8</td></tr>
+            <tr><td>Physics I</td><td>PHY101</td><td>3</td><td><span class="badge-status approved">Approved</span></td><td>Jan 5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS TAB -->
+    <div id="tab-notifications" class="tab-content">
+      <h3>Notifications</h3>
+      <div class="notif-list">
+        <div class="notif-item unread">
+          <span class="notif-icon">✅</span>
+          <div>
+            <strong>Enrollment Confirmed</strong>
+            <p>Your enrollment in CS401 – Software Engineering has been approved.</p>
+            <small>2 hours ago</small>
+          </div>
+        </div>
+        <div class="notif-item unread">
+          <span class="notif-icon">📢</span>
+          <div>
+            <strong>Course Update</strong>
+            <p>ENG201 class schedule changed to Tuesdays and Thursdays.</p>
+            <small>1 day ago</small>
+          </div>
+        </div>
+        <div class="notif-item unread">
+          <span class="notif-icon">🔔</span>
+          <div>
+            <strong>Academic Announcement</strong>
+            <p>Spring 2025 enrollment opens February 1st. Check available courses.</p>
+            <small>3 days ago</small>
+          </div>
+        </div>
+        <div class="notif-item">
+          <span class="notif-icon">⏳</span>
+          <div>
+            <strong>Enrollment Pending</strong>
+            <p>MATH301 enrollment is under review by the admin.</p>
+            <small>5 days ago</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="tab-profile" class="tab-content">
+      <h3>My Profile</h3>
+      <div class="profile-card">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">JS</div>
+        <div class="profile-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="prof-fname" value="Jane"/>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="prof-lname" value="Smith"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Student ID</label>
+            <input type="text" id="prof-sid" value="STU-2024-001" readonly/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="prof-email" value="jane.smith@university.edu"/>
+          </div>
+          <div class="form-group">
+            <label>Program</label>
+            <input type="text" id="prof-program" value="Bachelor of Computer Science"/>
+          </div>
+          <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+          <div id="profile-success" class="success-msg hidden">✓ Profile updated successfully!</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ──────────── ADMIN DASHBOARD ──────────── -->
+<div id="page-admin-dashboard" class="page dashboard-page">
+  <aside class="sidebar admin-sidebar">
+    <div class="sidebar-brand">⚙ Admin</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="anav active" onclick="showTab('atab-overview','anav')"><span>📊</span> Overview</a>
+      <a href="#" class="anav" onclick="showTab('atab-students','anav')"><span>👥</span> Students</a>
+      <a href="#" class="anav" onclick="showTab('atab-courses','anav')"><span>📚</span> Courses</a>
+      <a href="#" class="anav" onclick="showTab('atab-enrollments','anav')"><span>📋</span> Enrollments</a>
+      <a href="#" class="anav" onclick="showTab('atab-reports','anav')"><span>📈</span> Reports</a>
+    </nav>
+    <button class="sidebar-logout" onclick="logout()">⇠ Logout</button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2>Admin Dashboard</h2>
+        <p class="dash-date" id="admin-dash-date"></p>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar admin-avatar">AD</div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="atab-overview" class="tab-content active">
+      <div class="kpi-row">
+        <div class="kpi-card"><span class="kpi-icon">👥</span><div><div class="kpi-num">1,247</div><div class="kpi-label">Total Students</div></div></div>
+        <div class="kpi-card"><span class="kpi-icon">📚</span><div><div class="kpi-num">48</div><div class="kpi-label">Active Courses</div></div></div>
+        <div class="kpi-card"><span class="kpi-icon">⏳</span><div><div class="kpi-num">23</div><div class="kpi-label">Pending Approvals</div></div></div>
+        <div class="kpi-card"><span class="kpi-icon">🎓</span><div><div class="kpi-num">3,891</div><div class="kpi-label">Total Enrollments</div></div></div>
+      </div>
+      <div class="section-title">Pending Enrollment Approvals</div>
+      <div class="approval-list" id="approval-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div id="atab-students" class="tab-content">
+      <div class="tab-header">
+        <h3>Student Records</h3>
+        <button class="btn-primary small" onclick="openAddStudent()">+ Add Student</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="students-table">
+          <thead><tr><th>Name</th><th>Student ID</th><th>Email</th><th>Program</th><th>Actions</th></tr></thead>
+          <tbody id="students-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div id="atab-courses" class="tab-content">
+      <div class="tab-header">
+        <h3>Course Management</h3>
+        <button class="btn-primary small" onclick="openAddCourse()">+ Add Course</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Course Name</th><th>Code</th><th>Credits</th><th>Capacity</th><th>Enrolled</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="courses-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ENROLLMENTS -->
+    <div id="atab-enrollments" class="tab-content">
+      <h3>All Enrollment Requests</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Student</th><th>Course</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="enroll-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="atab-reports" class="tab-content">
+      <h3>Reports</h3>
+      <div class="reports-grid">
+        <div class="report-card" onclick="generateReport('enrollment')">
+          <span class="rep-icon">📋</span>
+          <h4>Enrollment Report</h4>
+          <p>Summary of all student enrollments by course.</p>
+          <button class="btn-outline small">Generate</button>
+        </div>
+        <div class="report-card" onclick="generateReport('capacity')">
+          <span class="rep-icon">📊</span>
+          <h4>Capacity Report</h4>
+          <p>Course fill rates and available seat analysis.</p>
+          <button class="btn-outline small">Generate</button>
+        </div>
+        <div class="report-card" onclick="generateReport('admission')">
+          <span class="rep-icon">🎓</span>
+          <h4>Admission Report</h4>
+          <p>New student registrations and trends.</p>
+          <button class="btn-outline small">Generate</button>
+        </div>
+        <div class="report-card" onclick="generateReport('activity')">
+          <span class="rep-icon">📈</span>
+          <h4>Activity Report</h4>
+          <p>Student activity, logins, and performance metrics.</p>
+          <button class="btn-outline small">Generate</button>
+        </div>
+      </div>
+      <div id="report-output" class="report-output hidden"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ──────────── MODALS ──────────── -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
