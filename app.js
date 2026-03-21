@@ -7,17 +7,23 @@
 // ─── Firebase Configuration (Demo/Simulation) ─────
 // In production, replace with your actual Firebase config
 // imported from: https://console.firebase.google.com/
-const FIREBASE_CONFIG = {
-  projectId: "edu-portal-demo",
-  authDomain: "edu-portal-demo.firebaseapp.com",
-  storageBucket: "edu-portal-demo.appspot.com",
+const firebaseConfig = {
+  apiKey: "AIzaSyDc6fnTLLjZq6NLpMoNa59fJlIhU7xQ44A",
+  authDomain: "edu-portal-ranjan.firebaseapp.com",
+  databaseURL: "https://edu-portal-ranjan-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "edu-portal-ranjan",
+  storageBucket: "edu-portal-ranjan.firebasestorage.app",
+  messagingSenderId: "950280364910",
+  appId: "1:950280364910:web:fa297e15137298681e577f"
 };
+
+firebase.initializeApp(firebaseConfig);
 
 // Deployment info
 const DEPLOYMENT = {
   platform: "Vercel",
-  repoUrl: "https://github.com/your-org/edu-portal",
-  liveUrl:  "https://edu-portal.vercel.app",
+  repoUrl: "https://github.com/Ranjan6501/edu-portal",
+  liveUrl:  "https://edu-portal-lyart.vercel.app",
 };
 
 // ─── Demo Data Store (simulates Firestore) ─────────
