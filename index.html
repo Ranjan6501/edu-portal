@@ -3,532 +3,904 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EduPortal — Student Registration & Enrollment System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta name="description" content="EduPortal — Student Registration & Enrollment System. Register, browse courses, and manage your academic life all in one place." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>" />
+  <title>EduPortal — Student Registration & Enrollment</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ──────────── LANDING PAGE ──────────── -->
+<!-- ═══════════════════════════════════════════ LANDING PAGE ══ -->
 <div id="page-landing" class="page active">
 
-  <nav class="navbar">
-    <div class="nav-brand">
-      <span class="brand-icon">◈</span>
-      <span>EduPortal</span>
-    </div>
-    <div class="nav-links">
-      <a href="#" onclick="showSection('features')">Features</a>
-      <a href="#" onclick="showSection('about')">About</a>
-      <button class="btn-outline" onclick="showPage('page-login')">Sign In</button>
-      <button class="btn-primary" onclick="showPage('page-register')">Get Started</button>
-    </div>
-    <button class="hamburger" onclick="toggleMenu()">☰</button>
-  </nav>
+  <div class="landing-card">
 
-  <section class="hero">
-    <div class="hero-badge">Powered by Firebase · GitHub · Vercel</div>
-    <h1 class="hero-title">
-      Smarter<br/>
-      <span class="accent">Enrollment</span><br/>
-      Starts Here.
-    </h1>
-    <p class="hero-sub">A centralized platform for students to register, enroll in courses, and track academic progress — and for administrators to manage everything effortlessly.</p>
-    <div class="hero-cta">
-      <button class="btn-primary large" onclick="showPage('page-register')">Create Student Account</button>
-      <button class="btn-ghost large" onclick="showPage('page-admin-login')">Admin Portal →</button>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-num">12K+</span><span class="stat-label">Students</span></div>
-      <div class="stat-div"></div>
-      <div class="stat"><span class="stat-num">340+</span><span class="stat-label">Courses</span></div>
-      <div class="stat-div"></div>
-      <div class="stat"><span class="stat-num">99.9%</span><span class="stat-label">Uptime</span></div>
-    </div>
-  </section>
+    <!-- Left decorative panel -->
+    <div class="landing-left">
+      <div class="landing-left-brand">
+        <span class="logo-icon">◈</span>
+        <span>EduPortal</span>
+      </div>
 
-  <section class="features-strip" id="features">
-    <div class="feature-card">
-      <div class="feat-icon">⚡</div>
-      <h3>Instant Enrollment</h3>
-      <p>Register and enroll in courses in minutes with real-time status tracking.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feat-icon">🔒</div>
-      <h3>Secure & Role-Based</h3>
-      <p>Firebase Auth with encrypted data and separate student/admin access levels.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feat-icon">📊</div>
-      <h3>Live Reports</h3>
-      <p>Generate enrollment, capacity, and performance reports on demand.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feat-icon">🔔</div>
-      <h3>Smart Notifications</h3>
-      <p>Get real-time alerts for enrollment confirmations and course updates.</p>
-    </div>
-  </section>
-
-  <section class="tech-stack">
-    <p class="tech-label">Built & Deployed With</p>
-    <div class="tech-logos">
-      <div class="tech-chip">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </div>
-      <div class="tech-chip">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
-        Vercel
-      </div>
-      <div class="tech-chip">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFA000"><path d="M3.89 15.672L6.255.461A.542.542 0 0 1 7.27.288l2.543 4.771zm16.794 3.692l-2.25-14a.54.54 0 0 0-.919-.295L3.316 19.365l7.856 4.427a1.621 1.621 0 0 0 1.588 0zM14.3 7.147l-1.82-3.482a.542.542 0 0 0-.96 0L3.53 17.984z"/></svg>
-        Firebase
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <p>© 2025 EduPortal · Student Registration & Enrollment System · Built with ♥</p>
-  </footer>
-</div>
-
-<!-- ──────────── STUDENT LOGIN ──────────── -->
-<div id="page-login" class="page auth-page">
-  <div class="auth-split">
-    <div class="auth-left">
-      <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
-      <div class="auth-brand">◈ EduPortal</div>
-      <h2>Welcome back</h2>
-      <p class="auth-sub">Sign in to access your courses and enrollment status.</p>
-      <div class="form-group">
-        <label>Student ID or Email</label>
-        <input type="text" id="login-email" placeholder="e.g. STU-2024-001 or name@edu.com"/>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="login-pass" placeholder="Enter your password"/>
-      </div>
-      <button class="btn-primary full" onclick="doLogin()">Sign In</button>
-      <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('page-register')">Register here</a></p>
-      <div class="divider"><span>or</span></div>
-      <button class="btn-outline full" onclick="showPage('page-admin-login')">Sign in as Administrator</button>
-      <div id="login-error" class="error-msg hidden"></div>
-    </div>
-    <div class="auth-right">
-      <div class="auth-illustration">
-        <div class="circle-big"></div>
-        <div class="circle-sm"></div>
-        <div class="card-float card1">
-          <span class="cf-icon">📚</span>
-          <div><strong>CS401</strong><br/><small>Enrolled</small></div>
+      <div class="landing-left-center">
+        <div class="land-chip">
+          <span class="chip-icon">📚</span> Browse &amp; enroll in courses
         </div>
-        <div class="card-float card2">
-          <span class="cf-icon">✅</span>
-          <div><strong>Approved</strong><br/><small>2 courses</small></div>
+        <div class="land-chip land-chip-2">
+          <span class="chip-icon">◎</span> Real-time enrollment tracking
         </div>
-        <div class="card-float card3">
-          <span class="cf-icon">🔔</span>
-          <div><strong>New update</strong><br/><small>Math101 starts Mon</small></div>
+        <div class="land-chip land-chip-3">
+          <span class="chip-icon">✦</span> Manage your academic profile
         </div>
+        <div class="land-chip land-chip-2" style="margin-top:4px">
+          <span class="chip-icon">🔐</span> Secure &amp; private
+        </div>
+
+        <!-- decorative plusses -->
+        <span class="land-plus land-plus-1">+</span>
+        <span class="land-plus land-plus-2">+</span>
+        <span class="land-plus land-plus-3">+</span>
+        <span class="land-star">✦</span>
+      </div>
+
+      <div class="landing-left-bottom">
+        <div class="landing-left-tagline">Academic Year 2026–27</div>
       </div>
     </div>
+
+    <!-- Right content panel -->
+    <div class="landing-right">
+      <div class="landing-logo-row">
+        <span style="font-size:18px;color:#6C63FF">◈</span>
+        <span class="landing-logo-text">Edu<span>Portal</span></span>
+      </div>
+
+      <h1 class="landing-right-title">
+        Your Academic<br><em>Journey Starts</em><br>Here.
+      </h1>
+      <p class="landing-right-sub">
+        Register, enroll in courses, and manage your academic life — all in one place.
+      </p>
+
+      <div class="landing-right-actions">
+        <button class="btn-landing-primary" onclick="showPage('page-student-auth'); switchAuthTab('signup')">
+          Register as Student
+        </button>
+        <button class="btn-landing-outline" onclick="showPage('page-student-auth'); switchAuthTab('signin')">
+          Already enrolled? Sign In
+        </button>
+      </div>
+
+      <div class="landing-divider"><span>or</span></div>
+
+      <button class="btn-landing-admin" onclick="showPage('page-admin-login')">
+        🔐 Admin Access
+      </button>
+
+      <div class="landing-badge">Academic Year 2026–27</div>
+    </div>
+
   </div>
 </div>
 
-<!-- ──────────── STUDENT REGISTER ──────────── -->
-<div id="page-register" class="page auth-page">
-  <div class="auth-split">
-    <div class="auth-left">
+<!-- ══════════════════════════════════════ STUDENT AUTH (combined) ══ -->
+<div id="page-student-auth" class="page">
+  <div class="auth-layout student-auth-layout">
+
+    <!-- Left sidebar -->
+    <div class="auth-sidebar student-sidebar">
       <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
-      <div class="auth-brand">◈ EduPortal</div>
-      <h2>Create your account</h2>
-      <p class="auth-sub">Join thousands of students managing their academics online.</p>
-      <div class="form-row">
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" id="reg-fname" placeholder="Jane"/>
-        </div>
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" id="reg-lname" placeholder="Doe"/>
+      <div class="auth-sidebar-content">
+        <span class="logo-icon large">◈</span>
+        <h2 id="sidebar-headline">Welcome Back</h2>
+        <p id="sidebar-desc">Sign in to your student account to manage enrollments and track your academic progress.</p>
+        <div class="sidebar-features">
+          <div class="sidebar-feature"><span>✦</span> Real-time enrollment tracking</div>
+          <div class="sidebar-feature"><span>✦</span> Browse &amp; request courses</div>
+          <div class="sidebar-feature"><span>✦</span> Manage your profile</div>
+          <div class="sidebar-feature"><span>✦</span> Secure &amp; private</div>
         </div>
       </div>
-      <div class="form-group">
-        <label>Student ID</label>
-        <input type="text" id="reg-sid" placeholder="STU-2024-001"/>
-      </div>
-      <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="reg-email" placeholder="jane.doe@university.edu"/>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="reg-pass" placeholder="Min. 8 characters"/>
-      </div>
-      <button class="btn-primary full" onclick="doRegister()">Create Account</button>
-      <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('page-login')">Sign in</a></p>
-      <div id="reg-error" class="error-msg hidden"></div>
-    </div>
-    <div class="auth-right dark-right">
-      <div class="checklist-visual">
-        <h3>Why EduPortal?</h3>
-        <ul class="check-list">
-          <li>✓ Register for courses in minutes</li>
-          <li>✓ Real-time enrollment status</li>
-          <li>✓ Instant notifications</li>
-          <li>✓ Secure, encrypted records</li>
-          <li>✓ Available 24/7 on any device</li>
-          <li>✓ No paperwork required</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ──────────── ADMIN LOGIN ──────────── -->
-<div id="page-admin-login" class="page auth-page">
-  <div class="auth-split">
-    <div class="auth-left">
-      <button class="back-btn" onclick="showPage('page-landing')">← Back</button>
-      <div class="auth-brand admin-brand">⚙ Admin Portal</div>
-      <h2>Administrator Sign In</h2>
-      <p class="auth-sub">Manage students, courses, enrollments, and reports.</p>
-      <div class="form-group">
-        <label>Admin Email</label>
-        <input type="email" id="admin-email" placeholder="admin@university.edu"/>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="admin-pass" placeholder="Admin password"/>
-      </div>
-      <p class="hint-text">Demo credentials: admin@edu.com / admin123</p>
-      <button class="btn-admin full" onclick="doAdminLogin()">Sign In as Admin</button>
-      <p class="auth-switch"><a href="#" onclick="showPage('page-login')">← Student Login</a></p>
-      <div id="admin-error" class="error-msg hidden"></div>
-    </div>
-    <div class="auth-right admin-right">
-      <div class="admin-visual">
-        <div class="admin-dash-preview">
-          <div class="adp-row"><span class="adp-dot green"></span> 3 Enrollments Pending</div>
-          <div class="adp-row"><span class="adp-dot blue"></span> 2 New Registrations</div>
-          <div class="adp-row"><span class="adp-dot yellow"></span> CS301 at 90% capacity</div>
-          <div class="adp-row"><span class="adp-dot red"></span> 1 Course Full</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ──────────── STUDENT DASHBOARD ──────────── -->
-<div id="page-student-dashboard" class="page dashboard-page">
-  <aside class="sidebar">
-    <div class="sidebar-brand">◈ EduPortal</div>
-    <nav class="sidebar-nav">
-      <a href="#" class="snav active" onclick="showTab('tab-overview','snav')">
-        <span>🏠</span> Overview
-      </a>
-      <a href="#" class="snav" onclick="showTab('tab-courses','snav')">
-        <span>📚</span> Browse Courses
-      </a>
-      <a href="#" class="snav" onclick="showTab('tab-enrollments','snav')">
-        <span>📋</span> My Enrollments
-      </a>
-      <a href="#" class="snav" onclick="showTab('tab-notifications','snav')">
-        <span>🔔</span> Notifications <span class="badge">3</span>
-      </a>
-      <a href="#" class="snav" onclick="showTab('tab-profile','snav')">
-        <span>👤</span> Profile
-      </a>
-    </nav>
-    <button class="sidebar-logout" onclick="logout()">⇠ Logout</button>
-  </aside>
-
-  <main class="dash-main">
-    <div class="dash-topbar">
-      <div>
-        <h2 id="student-greeting">Welcome, Student!</h2>
-        <p class="dash-date" id="dash-date"></p>
-      </div>
-      <div class="topbar-right">
-        <div class="avatar" id="student-avatar">JS</div>
-      </div>
+      <div class="sidebar-deco">◈</div>
     </div>
 
-    <!-- OVERVIEW TAB -->
-    <div id="tab-overview" class="tab-content active">
-      <div class="kpi-row">
-        <div class="kpi-card">
-          <span class="kpi-icon">📚</span>
-          <div><div class="kpi-num">4</div><div class="kpi-label">Enrolled Courses</div></div>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon">⏳</span>
-          <div><div class="kpi-num">1</div><div class="kpi-label">Pending Approval</div></div>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon">✅</span>
-          <div><div class="kpi-num">3</div><div class="kpi-label">Approved</div></div>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon">🗓️</span>
-          <div><div class="kpi-num">2025</div><div class="kpi-label">Academic Year</div></div>
-        </div>
-      </div>
-      <div class="section-title">Recent Enrollment Activity</div>
-      <div class="activity-list">
-        <div class="activity-item">
-          <span class="act-status approved">Approved</span>
-          <div class="act-info"><strong>CS401 – Software Engineering</strong><br/><small>Enrolled on Jan 10, 2025</small></div>
-        </div>
-        <div class="activity-item">
-          <span class="act-status pending">Pending</span>
-          <div class="act-info"><strong>MATH301 – Calculus III</strong><br/><small>Submitted Jan 12, 2025</small></div>
-        </div>
-        <div class="activity-item">
-          <span class="act-status approved">Approved</span>
-          <div class="act-info"><strong>ENG201 – Technical Writing</strong><br/><small>Enrolled on Jan 8, 2025</small></div>
-        </div>
-        <div class="activity-item">
-          <span class="act-status approved">Approved</span>
-          <div class="act-info"><strong>PHY101 – Physics I</strong><br/><small>Enrolled on Jan 5, 2025</small></div>
-        </div>
-      </div>
-    </div>
+    <!-- Right panel -->
+    <div class="auth-form-panel student-form-panel">
 
-    <!-- BROWSE COURSES TAB -->
-    <div id="tab-courses" class="tab-content">
-      <div class="tab-header">
-        <h3>Available Courses</h3>
-        <input type="text" class="search-input" placeholder="Search courses..." oninput="filterCourses(this.value)"/>
+      <!-- Tab switcher -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin-btn" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-signup-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+        <div class="auth-tab-indicator" id="auth-tab-indicator"></div>
       </div>
-      <div class="courses-grid" id="courses-grid">
-        <!-- Populated by JS -->
-      </div>
-    </div>
 
-    <!-- MY ENROLLMENTS TAB -->
-    <div id="tab-enrollments" class="tab-content">
-      <h3>My Enrollments</h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr><th>Course</th><th>Code</th><th>Credits</th><th>Status</th><th>Date</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Software Engineering</td><td>CS401</td><td>3</td><td><span class="badge-status approved">Approved</span></td><td>Jan 10</td></tr>
-            <tr><td>Calculus III</td><td>MATH301</td><td>4</td><td><span class="badge-status pending">Pending</span></td><td>Jan 12</td></tr>
-            <tr><td>Technical Writing</td><td>ENG201</td><td>2</td><td><span class="badge-status approved">Approved</span></td><td>Jan 8</td></tr>
-            <tr><td>Physics I</td><td>PHY101</td><td>3</td><td><span class="badge-status approved">Approved</span></td><td>Jan 5</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- NOTIFICATIONS TAB -->
-    <div id="tab-notifications" class="tab-content">
-      <h3>Notifications</h3>
-      <div class="notif-list">
-        <div class="notif-item unread">
-          <span class="notif-icon">✅</span>
-          <div>
-            <strong>Enrollment Confirmed</strong>
-            <p>Your enrollment in CS401 – Software Engineering has been approved.</p>
-            <small>2 hours ago</small>
+      <!-- ── SIGN IN PANEL ── -->
+      <div id="auth-signin-panel" class="auth-panel active">
+        <div class="auth-panel-header">
+          <h2 class="form-title">Welcome back</h2>
+          <p class="form-subtitle">Enter your credentials to access your dashboard</p>
+        </div>
+        <form class="form" onsubmit="handleStudentLogin(event)">
+          <div class="form-group">
+            <label for="slogin-email">Email Address</label>
+            <input type="email" id="slogin-email" placeholder="your@email.com" required />
           </div>
-        </div>
-        <div class="notif-item unread">
-          <span class="notif-icon">📢</span>
-          <div>
-            <strong>Course Update</strong>
-            <p>ENG201 class schedule changed to Tuesdays and Thursdays.</p>
-            <small>1 day ago</small>
+          <div class="form-group">
+            <label for="slogin-password">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="slogin-password" placeholder="Your password" required />
+              <button type="button" class="toggle-pw" onclick="togglePw('slogin-password')">👁</button>
+            </div>
           </div>
-        </div>
-        <div class="notif-item unread">
-          <span class="notif-icon">🔔</span>
-          <div>
-            <strong>Academic Announcement</strong>
-            <p>Spring 2025 enrollment opens February 1st. Check available courses.</p>
-            <small>3 days ago</small>
+          <div id="slogin-error" class="form-error hidden"></div>
+          <div class="forgot-pw-row">
+            <a href="#" class="forgot-pw-link" onclick="openForgotPassword('slogin-email');return false;">Forgot password?</a>
           </div>
-        </div>
-        <div class="notif-item">
-          <span class="notif-icon">⏳</span>
-          <div>
-            <strong>Enrollment Pending</strong>
-            <p>MATH301 enrollment is under review by the admin.</p>
-            <small>5 days ago</small>
-          </div>
-        </div>
+          <button type="submit" class="btn-submit" id="slogin-submit-btn">
+            <span class="btn-text">Sign In →</span>
+            <span class="btn-loader hidden">⟳</span>
+          </button>
+        </form>
+        <p class="form-switch">New here? <a href="#" onclick="switchAuthTab('signup')">Create an account</a></p>
       </div>
-    </div>
 
-    <!-- PROFILE TAB -->
-    <div id="tab-profile" class="tab-content">
-      <h3>My Profile</h3>
-      <div class="profile-card">
-        <div class="profile-avatar-lg" id="profile-avatar-lg">JS</div>
-        <div class="profile-fields">
+      <!-- ── SIGN UP PANEL ── -->
+      <div id="auth-signup-panel" class="auth-panel">
+        <div class="auth-panel-header">
+          <h2 class="form-title">Create account</h2>
+          <p class="form-subtitle">Join EduPortal and start your academic journey</p>
+        </div>
+        <form id="register-form" class="form" onsubmit="handleRegister(event)">
           <div class="form-row">
             <div class="form-group">
-              <label>First Name</label>
-              <input type="text" id="prof-fname" value="Jane"/>
+              <label for="reg-firstname">First Name</label>
+              <input type="text" id="reg-firstname" placeholder="First Name" required />
             </div>
             <div class="form-group">
-              <label>Last Name</label>
-              <input type="text" id="prof-lname" value="Smith"/>
+              <label for="reg-lastname">Last Name</label>
+              <input type="text" id="reg-lastname" placeholder="Last Name" required />
             </div>
           </div>
           <div class="form-group">
-            <label>Student ID</label>
-            <input type="text" id="prof-sid" value="STU-2024-001" readonly/>
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" placeholder="Your@email.com" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-studentid">Student ID </label>
+              <input type="text" id="reg-studentid" placeholder="Regd No." />
+            </div>
+            <div class="form-group">
+              <label for="reg-program">Program</label>
+              <select id="reg-program" required>
+                <option value="">Select Program</option>
+                <option>Undergraduate</option>
+                <option>Postgraduate</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="prof-email" value="jane.smith@university.edu"/>
+            <label for="reg-dob">Date of Birth</label>
+            <input type="date" id="reg-dob" required />
           </div>
-          <div class="form-group">
-            <label>Program</label>
-            <input type="text" id="prof-program" value="Bachelor of Computer Science"/>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-password">Password</label>
+              <div class="input-wrap">
+                <input type="password" id="reg-password" placeholder="Min. 8 characters" required />
+                <button type="button" class="toggle-pw" onclick="togglePw('reg-password')">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-password2">Confirm Password</label>
+              <div class="input-wrap">
+                <input type="password" id="reg-password2" placeholder="Repeat password" required />
+                <button type="button" class="toggle-pw" onclick="togglePw('reg-password2')">👁</button>
+              </div>
+            </div>
           </div>
-          <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
-          <div id="profile-success" class="success-msg hidden">✓ Profile updated successfully!</div>
-        </div>
+          <div id="register-error" class="form-error hidden"></div>
+          <button type="submit" class="btn-submit" id="register-submit-btn">
+            <span class="btn-text">Create Account →</span>
+            <span class="btn-loader hidden">⟳</span>
+          </button>
+        </form>
+        <p class="form-switch">Already have an account? <a href="#" onclick="switchAuthTab('signin')">Sign in</a></p>
       </div>
+
     </div>
-
-  </main>
-</div>
-
-<!-- ──────────── ADMIN DASHBOARD ──────────── -->
-<div id="page-admin-dashboard" class="page dashboard-page">
-  <aside class="sidebar admin-sidebar">
-    <div class="sidebar-brand">⚙ Admin</div>
-    <nav class="sidebar-nav">
-      <a href="#" class="anav active" onclick="showTab('atab-overview','anav')"><span>📊</span> Overview</a>
-      <a href="#" class="anav" onclick="showTab('atab-students','anav')"><span>👥</span> Students</a>
-      <a href="#" class="anav" onclick="showTab('atab-courses','anav')"><span>📚</span> Courses</a>
-      <a href="#" class="anav" onclick="showTab('atab-enrollments','anav')"><span>📋</span> Enrollments</a>
-      <a href="#" class="anav" onclick="showTab('atab-reports','anav')"><span>📈</span> Reports</a>
-    </nav>
-    <button class="sidebar-logout" onclick="logout()">⇠ Logout</button>
-  </aside>
-
-  <main class="dash-main">
-    <div class="dash-topbar">
-      <div>
-        <h2>Admin Dashboard</h2>
-        <p class="dash-date" id="admin-dash-date"></p>
-      </div>
-      <div class="topbar-right">
-        <div class="avatar admin-avatar">AD</div>
-      </div>
-    </div>
-
-    <!-- OVERVIEW -->
-    <div id="atab-overview" class="tab-content active">
-      <div class="kpi-row">
-        <div class="kpi-card"><span class="kpi-icon">👥</span><div><div class="kpi-num">1,247</div><div class="kpi-label">Total Students</div></div></div>
-        <div class="kpi-card"><span class="kpi-icon">📚</span><div><div class="kpi-num">48</div><div class="kpi-label">Active Courses</div></div></div>
-        <div class="kpi-card"><span class="kpi-icon">⏳</span><div><div class="kpi-num">23</div><div class="kpi-label">Pending Approvals</div></div></div>
-        <div class="kpi-card"><span class="kpi-icon">🎓</span><div><div class="kpi-num">3,891</div><div class="kpi-label">Total Enrollments</div></div></div>
-      </div>
-      <div class="section-title">Pending Enrollment Approvals</div>
-      <div class="approval-list" id="approval-list">
-        <!-- populated by JS -->
-      </div>
-    </div>
-
-    <!-- STUDENTS -->
-    <div id="atab-students" class="tab-content">
-      <div class="tab-header">
-        <h3>Student Records</h3>
-        <button class="btn-primary small" onclick="openAddStudent()">+ Add Student</button>
-      </div>
-      <div class="table-wrap">
-        <table class="data-table" id="students-table">
-          <thead><tr><th>Name</th><th>Student ID</th><th>Email</th><th>Program</th><th>Actions</th></tr></thead>
-          <tbody id="students-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- COURSES -->
-    <div id="atab-courses" class="tab-content">
-      <div class="tab-header">
-        <h3>Course Management</h3>
-        <button class="btn-primary small" onclick="openAddCourse()">+ Add Course</button>
-      </div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Course Name</th><th>Code</th><th>Credits</th><th>Capacity</th><th>Enrolled</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="courses-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ENROLLMENTS -->
-    <div id="atab-enrollments" class="tab-content">
-      <h3>All Enrollment Requests</h3>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Student</th><th>Course</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody id="enroll-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- REPORTS -->
-    <div id="atab-reports" class="tab-content">
-      <h3>Reports</h3>
-      <div class="reports-grid">
-        <div class="report-card" onclick="generateReport('enrollment')">
-          <span class="rep-icon">📋</span>
-          <h4>Enrollment Report</h4>
-          <p>Summary of all student enrollments by course.</p>
-          <button class="btn-outline small">Generate</button>
-        </div>
-        <div class="report-card" onclick="generateReport('capacity')">
-          <span class="rep-icon">📊</span>
-          <h4>Capacity Report</h4>
-          <p>Course fill rates and available seat analysis.</p>
-          <button class="btn-outline small">Generate</button>
-        </div>
-        <div class="report-card" onclick="generateReport('admission')">
-          <span class="rep-icon">🎓</span>
-          <h4>Admission Report</h4>
-          <p>New student registrations and trends.</p>
-          <button class="btn-outline small">Generate</button>
-        </div>
-        <div class="report-card" onclick="generateReport('activity')">
-          <span class="rep-icon">📈</span>
-          <h4>Activity Report</h4>
-          <p>Student activity, logins, and performance metrics.</p>
-          <button class="btn-outline small">Generate</button>
-        </div>
-      </div>
-      <div id="report-output" class="report-output hidden"></div>
-    </div>
-
-  </main>
-</div>
-
-<!-- ──────────── MODALS ──────────── -->
-<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-content"></div>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ══════════════════════════════════════ ADMIN LOGIN ══ -->
+<div id="page-admin-login" class="page">
+  <div class="auth-layout admin-variant">
+    <div class="auth-sidebar dark">
+      <button class="back-btn light" onclick="showPage('page-landing')">← Back</button>
+      <div class="auth-sidebar-content">
+        <span class="logo-icon large">◈</span>
+        <h2>Admin Portal</h2>
+        <p>Restricted access for academic administrators and faculty coordinators.</p>
+        <div class="sidebar-feature"><span>✦</span> Approve enrollments</div>
+        <div class="sidebar-feature"><span>✦</span> Manage course capacities</div>
+        <div class="sidebar-feature"><span>✦</span> Generate academic reports</div>
+      </div>
+    </div>
+    <div class="auth-form-panel">
+      <div class="admin-badge">🔐 Administrator Access</div>
+      <h2 class="form-title">Admin Sign In</h2>
+      <p class="form-subtitle">Authorized personnel only</p>
+      <form class="form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="alogin-email">Admin Email</label>
+          <input type="email" id="alogin-email" placeholder="admin@university.edu" required />
+        </div>
+        <div class="form-group">
+          <label for="alogin-password">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="alogin-password" placeholder="Admin password" required />
+            <button type="button" class="toggle-pw" onclick="togglePw('alogin-password')">👁</button>
+          </div>
+        </div>
+        <div id="alogin-error" class="form-error hidden"></div>
+        <div class="forgot-pw-row">
+          <a href="#" class="forgot-pw-link" onclick="openForgotPassword('alogin-email');return false;">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-submit admin-submit" id="alogin-submit-btn">
+          <span class="btn-text">Access Dashboard</span>
+          <span class="btn-loader hidden">⟳</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ STUDENT DASHBOARD ══ -->
+<div id="page-student-dashboard" class="page">
+  <div class="dashboard-layout">
+    <button class="mobile-nav-toggle" onclick="document.getElementById('student-sidebar').classList.toggle('mobile-open')" aria-label="Toggle navigation">☰</button>
+    <!-- Sidebar -->
+    <aside class="dash-sidebar" id="student-sidebar">
+      <div class="dash-logo">
+        <span class="logo-icon">◈</span>
+        <span>EduPortal</span>
+      </div>
+      <nav class="dash-nav">
+        <a class="dash-nav-item active" href="#" onclick="showStudentTab('overview');return false;" data-tab="overview">
+          <span class="nav-icon">⊞</span> Overview
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showStudentTab('profile');return false;" data-tab="profile">
+          <span class="nav-icon">◉</span> My Profile
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showStudentTab('courses');return false;" data-tab="courses">
+          <span class="nav-icon">◫</span> Browse Courses
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showStudentTab('enrollments');return false;" data-tab="enrollments">
+          <span class="nav-icon">◎</span> My Enrollments
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showStudentTab('password');return false;" data-tab="password">
+          <span class="nav-icon">◐</span> Change Password
+        </a>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <button class="logout-btn" onclick="handleLogout()">Sign Out →</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="dash-main">
+      <header class="dash-header">
+        <div>
+          <h1 class="dash-greeting" id="student-greeting">Good morning, Student</h1>
+          <p class="dash-subline" id="student-subline">Here's your academic summary</p>
+        </div>
+        <div class="dash-header-right">
+          <div class="avatar" id="student-avatar">S</div>
+        </div>
+      </header>
+
+      <!-- OVERVIEW TAB -->
+      <section id="tab-overview" class="dash-tab active">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-card-icon teal">◫</div>
+            <div>
+              <div class="stat-card-num" id="ov-enrolled">0</div>
+              <div class="stat-card-label">Enrolled Courses</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon amber">◎</div>
+            <div>
+              <div class="stat-card-num" id="ov-pending">0</div>
+              <div class="stat-card-label">Pending Approval</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon blue">✦</div>
+            <div>
+              <div class="stat-card-num" id="ov-credits">0</div>
+              <div class="stat-card-label">Total Credits</div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <h3 class="section-card-title">Recent Enrollment Activity</h3>
+          <div id="recent-activity" class="activity-list">
+            <div class="empty-state">No recent activity yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE TAB -->
+      <section id="tab-profile" class="dash-tab">
+        <form class="form profile-form" onsubmit="handleUpdateProfile(event)">
+
+          <!-- Personal Information -->
+          <div class="section-card">
+            <h3 class="section-card-title">Personal Information</h3>
+            <div class="locked-fields-notice">
+              🔒 First Name, Last Name, Student ID, Program and Date of Birth are locked.
+              <button type="button" class="btn-request-correction" onclick="openCorrectionRequest()">Request a Correction →</button>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-firstname">First Name</label>
+                <input type="text" id="prof-firstname" disabled class="locked-field" />
+              </div>
+              <div class="form-group">
+                <label for="prof-lastname">Last Name</label>
+                <input type="text" id="prof-lastname" disabled class="locked-field" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="prof-email">Email Address</label>
+              <input type="email" id="prof-email" disabled />
+            </div>
+            <div class="form-group">
+              <label for="prof-studentid">Student ID</label>
+              <input type="text" id="prof-studentid" disabled class="locked-field" />
+            </div>
+            <div class="form-group">
+              <label for="prof-program">Program</label>
+              <select id="prof-program" disabled class="locked-field">
+                <option value="">Select Program</option>
+                <option>Undergraduate</option>
+                <option>Postgraduate</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prof-phone">Phone Number </label>
+              <input type="tel" id="prof-phone" placeholder="+91" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-dob">Date of Birth</label>
+                <input type="date" id="prof-dob" disabled class="locked-field" />
+              </div>
+              <div class="form-group">
+                <label for="prof-gender">Gender</label>
+                <select id="prof-gender">
+                  <option value="">Select Gender</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-guardian-name">Guardian Name</label>
+                <input type="text" id="prof-guardian-name" placeholder="Guardian's full name" />
+              </div>
+              <div class="form-group">
+                <label for="prof-guardian-phone">Guardian Phone Number</label>
+                <input type="tel" id="prof-guardian-phone" placeholder="+91" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Information -->
+          <div class="section-card">
+            <h3 class="section-card-title">Address Information</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-state">State</label>
+                <input type="text" id="prof-state" placeholder="State" />
+              </div>
+              <div class="form-group">
+                <label for="prof-district">District</label>
+                <input type="text" id="prof-district" placeholder="District" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-pincode">Pin Code</label>
+                <input type="text" id="prof-pincode" placeholder="000000" maxlength="10" />
+              </div>
+              <div class="form-group">
+                <label for="prof-village">Village / Town</label>
+                <input type="text" id="prof-village" placeholder="Village or Town name" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Information -->
+          <div class="section-card">
+            <h3 class="section-card-title">Academic Information</h3>
+
+            <!-- 12th -->
+            <h4 class="profile-subsection-title">12th Standard</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-12-board">Board</label>
+                <input type="text" id="prof-12-board" placeholder="e.g. CBSE, ICSE" />
+              </div>
+              <div class="form-group">
+                <label for="prof-12-percentage">Percentage (%)</label>
+                <input type="number" id="prof-12-percentage" placeholder="e.g. 85.5" min="0" max="100" step="0.01" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-12-institution">Institution</label>
+                <input type="text" id="prof-12-institution" placeholder="School / College name" />
+              </div>
+              <div class="form-group">
+                <label for="prof-12-passout">Passout Year</label>
+                <input type="number" id="prof-12-passout" placeholder="e.g. 2022" min="1990" max="2099" />
+              </div>
+            </div>
+
+            <!-- 10th -->
+            <h4 class="profile-subsection-title">10th Standard</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-10-board">Board</label>
+                <input type="text" id="prof-10-board" placeholder="e.g. CBSE, State Board" />
+              </div>
+              <div class="form-group">
+                <label for="prof-10-percentage">Percentage (%)</label>
+                <input type="number" id="prof-10-percentage" placeholder="e.g. 90.0" min="0" max="100" step="0.01" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-10-institution">Institution</label>
+                <input type="text" id="prof-10-institution" placeholder="School name" />
+              </div>
+              <div class="form-group">
+                <label for="prof-10-passout">Passout Year</label>
+                <input type="number" id="prof-10-passout" placeholder="e.g. 2020" min="1990" max="2099" />
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-msg" class="form-success hidden"></div>
+          <button type="submit" class="btn-submit w-auto">Save Changes</button>
+        </form>
+      </section>
+
+      <!-- COURSES TAB -->
+      <section id="tab-courses" class="dash-tab">
+        <div class="tab-controls">
+          <input type="text" id="course-search" class="search-input" placeholder="Search courses by name or code…" oninput="filterCourses()" />
+          <select id="course-dept-filter" class="filter-select" onchange="filterCourses()">
+            <option value="">All Programs</option>
+            <option>Undergraduate</option>
+            <option>Postgraduate</option>
+          </select>
+        </div>
+        <div id="courses-grid" class="courses-grid">
+          <div class="loading-state">Loading courses…</div>
+        </div>
+      </section>
+
+      <!-- ENROLLMENTS TAB -->
+      <section id="tab-enrollments" class="dash-tab">
+        <div class="section-card">
+          <h3 class="section-card-title">My Enrollments</h3>
+          <div id="enrollments-list" class="enrollments-list">
+            <div class="loading-state">Loading enrollments…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHANGE PASSWORD TAB -->
+      <section id="tab-password" class="dash-tab">
+        <div class="section-card" style="max-width:480px">
+          <h3 class="section-card-title">Change Password</h3>
+          <form class="form" onsubmit="handleChangePassword(event)">
+            <div class="form-group">
+              <label for="pw-current">Current Password</label>
+              <div class="input-wrap">
+                <input type="password" id="pw-current" required />
+                <button type="button" class="toggle-pw" onclick="togglePw('pw-current')">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pw-new">New Password</label>
+              <div class="input-wrap">
+                <input type="password" id="pw-new" required />
+                <button type="button" class="toggle-pw" onclick="togglePw('pw-new')">👁</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pw-confirm">Confirm New Password</label>
+              <div class="input-wrap">
+                <input type="password" id="pw-confirm" required />
+                <button type="button" class="toggle-pw" onclick="togglePw('pw-confirm')">👁</button>
+              </div>
+            </div>
+            <div id="pw-msg" class="form-success hidden"></div>
+            <div id="pw-error" class="form-error hidden"></div>
+            <button type="submit" class="btn-submit w-auto">Update Password</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ ADMIN DASHBOARD ══ -->
+<div id="page-admin-dashboard" class="page">
+  <div class="dashboard-layout">
+    <button class="mobile-nav-toggle" onclick="document.getElementById('admin-sidebar').classList.toggle('mobile-open')" aria-label="Toggle navigation">☰</button>
+    <aside class="dash-sidebar admin-sidebar" id="admin-sidebar">
+      <div class="dash-logo">
+        <span class="logo-icon">◈</span>
+        <span>Admin Portal</span>
+      </div>
+      <nav class="dash-nav">
+        <a class="dash-nav-item active" href="#" onclick="showAdminTab('admin-overview');return false;" data-tab="admin-overview">
+          <span class="nav-icon">⊞</span> Overview
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showAdminTab('admin-students');return false;" data-tab="admin-students">
+          <span class="nav-icon">◉</span> Students
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showAdminTab('admin-courses');return false;" data-tab="admin-courses">
+          <span class="nav-icon">◫</span> Courses
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showAdminTab('admin-enrollments');return false;" data-tab="admin-enrollments">
+          <span class="nav-icon">◎</span> Enrollments
+        </a>
+        <a class="dash-nav-item" href="#" onclick="showAdminTab('admin-reports');return false;" data-tab="admin-reports">
+          <span class="nav-icon">▦</span> Reports
+        </a>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <button class="logout-btn" onclick="handleLogout()">Sign Out →</button>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <header class="dash-header">
+        <div>
+          <h1 class="dash-greeting">Admin Dashboard</h1>
+          <p class="dash-subline" id="admin-subline">Manage students, courses and enrollments</p>
+        </div>
+        <div class="dash-header-right">
+          <div class="avatar admin-av">A</div>
+        </div>
+      </header>
+
+      <!-- ADMIN OVERVIEW -->
+      <section id="tab-admin-overview" class="dash-tab active">
+        <div class="tab-controls">
+          <select id="adm-overview-course-filter" class="filter-select" onchange="filterAdminOverview()">
+            <option value="">All Courses</option>
+          </select>
+          <select id="adm-overview-program-filter" class="filter-select" onchange="filterAdminOverview()">
+            <option value="">All Programs</option>
+            <option>Undergraduate</option>
+            <option>Postgraduate</option>
+          </select>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-card-icon teal">◉</div>
+            <div>
+              <div class="stat-card-num" id="adm-total-students">0</div>
+              <div class="stat-card-label">Total Students</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon amber">◎</div>
+            <div>
+              <div class="stat-card-num" id="adm-pending">0</div>
+              <div class="stat-card-label">Pending Approvals</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon blue">◫</div>
+            <div>
+              <div class="stat-card-num" id="adm-total-courses">0</div>
+              <div class="stat-card-label">Active Courses</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon green">✦</div>
+            <div>
+              <div class="stat-card-num" id="adm-approved">0</div>
+              <div class="stat-card-label">Approved Enrollments</div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <h3 class="section-card-title">Pending Enrollment Requests</h3>
+          <div id="adm-pending-list" class="pending-list">
+            <div class="loading-state">Loading…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN STUDENTS -->
+      <section id="tab-admin-students" class="dash-tab">
+        <div class="tab-controls">
+          <input type="text" id="adm-student-search" class="search-input" placeholder="Search students…" oninput="filterAdminStudents()" />
+          <select id="adm-student-course-filter" class="filter-select" onchange="filterAdminStudents()">
+            <option value="">All Courses</option>
+          </select>
+          <select id="adm-student-program-filter" class="filter-select" onchange="filterAdminStudents()">
+            <option value="">All Programs</option>
+            <option>Undergraduate</option>
+            <option>Postgraduate</option>
+          </select>
+        </div>
+        <div class="section-card" style="margin-bottom:20px">
+          <h3 class="section-card-title">Pending Correction Requests</h3>
+          <div id="admin-correction-requests" class="pending-list">
+            <div class="loading-state">Loading…</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div id="admin-students-table" class="data-table-wrap">
+            <div class="loading-state">Loading students…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN COURSES -->
+      <section id="tab-admin-courses" class="dash-tab">
+        <div class="tab-controls">
+          <button class="btn-primary" onclick="openAddCourseModal()">+ Add Course</button>
+          <select id="adm-course-program-filter" class="filter-select" onchange="filterAdminCourses()">
+            <option value="">All Programs</option>
+            <option>Undergraduate</option>
+            <option>Postgraduate</option>
+          </select>
+        </div>
+        <div class="section-card">
+          <div id="admin-courses-table" class="data-table-wrap">
+            <div class="loading-state">Loading courses…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN ENROLLMENTS -->
+      <section id="tab-admin-enrollments" class="dash-tab">
+        <div class="tab-controls">
+          <select id="adm-enroll-status-filter" class="filter-select" onchange="filterAdminEnrollments()">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <select id="adm-enroll-course-filter" class="filter-select" onchange="filterAdminEnrollments()">
+            <option value="">All Courses</option>
+          </select>
+        </div>
+        <div class="section-card">
+          <div id="admin-enrollments-table" class="data-table-wrap">
+            <div class="loading-state">Loading…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN REPORTS -->
+      <section id="tab-admin-reports" class="dash-tab">
+        <div class="reports-grid">
+          <div class="report-card" onclick="generateReport('enrollment-summary')">
+            <div class="report-icon">📊</div>
+            <h4>Enrollment Summary</h4>
+            <p>Overview of all enrollments by status and department</p>
+            <span class="report-btn">Generate Report →</span>
+          </div>
+          <div class="report-card" onclick="generateReport('course-capacity')">
+            <div class="report-icon">📈</div>
+            <h4>Course Capacity Report</h4>
+            <p>Track seat availability across all active courses</p>
+            <span class="report-btn">Generate Report →</span>
+          </div>
+          <div class="report-card" onclick="generateReport('student-list')">
+            <div class="report-icon">📋</div>
+            <h4>Student Directory</h4>
+            <p>Full list of all registered students with their info</p>
+            <span class="report-btn">Generate Report →</span>
+          </div>
+          <div class="report-card" onclick="generateReport('department-stats')">
+            <div class="report-icon">🏛</div>
+            <h4>Program Statistics</h4>
+            <p>Student &amp; course count by program</p>
+            <span class="report-btn">Generate Report →</span>
+          </div>
+        </div>
+        <div id="report-output" class="report-output hidden"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ MODALS ══ -->
+<!-- Add/Edit Course Modal -->
+<div id="modal-course" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-course-title">Add New Course</h3>
+      <button class="modal-close" onclick="closeModal('modal-course')">✕</button>
+    </div>
+    <form class="form" onsubmit="handleSaveCourse(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Course Code</label>
+          <input type="text" id="course-code" placeholder="CS-101" required />
+        </div>
+        <div class="form-group">
+          <label>Duration (in Years)</label>
+          <input type="number" id="course-duration" placeholder="3" min="1" max="10" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Course Name</label>
+        <input type="text" id="course-name" placeholder="Introduction to Computer Science" required />
+      </div>
+      <div class="form-group">
+        <label>Program</label>
+        <select id="course-dept" required>
+          <option value="">Select Program</option>
+          <option>Undergraduate</option>
+          <option>Postgraduate</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Course Type</label>
+          <select id="course-type" required>
+            <option value="">Select Type</option>
+            <option>Normal</option>
+            <option>SSC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Max Capacity</label>
+          <input type="number" id="course-capacity" placeholder="30" min="1" required />
+        </div>
+      </div>
+      <input type="hidden" id="course-edit-id" />
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" onclick="closeModal('modal-course')">Cancel</button>
+        <button type="submit" class="btn-primary">Save Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Student Detail Modal -->
+<div id="modal-student" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Student Details</h3>
+      <button class="modal-close" onclick="closeModal('modal-student')">✕</button>
+    </div>
+    <div id="student-detail-content"></div>
+  </div>
+</div>
+
+<!-- Course Students Modal -->
+<div id="modal-course-students" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-course-students-title">Enrolled Students</h3>
+      <button class="modal-close" onclick="closeModal('modal-course-students')">✕</button>
+    </div>
+    <div id="course-students-content"></div>
+  </div>
+</div>
+
+<!-- Student: Request a Correction Modal -->
+<div id="modal-correction-request" class="modal-overlay hidden">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h3>Request a Correction</h3>
+      <button class="modal-close" onclick="closeModal('modal-correction-request')">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">
+      Select the field you need corrected, enter the correct value, and provide a brief reason. An admin will review your request.
+    </p>
+    <div class="form-group">
+      <label for="cr-field">Field to Correct</label>
+      <select id="cr-field" onchange="updateCorrectionCurrentValue()">
+        <option value="">— Select a field —</option>
+        <option value="firstName">First Name</option>
+        <option value="lastName">Last Name</option>
+        <option value="studentId">Student ID</option>
+        <option value="program">Program</option>
+        <option value="dob">Date of Birth</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cr-current">Current Value</label>
+        <input type="text" id="cr-current" disabled style="background:var(--surface2);color:var(--text-muted)" />
+      </div>
+      <div class="form-group">
+        <label for="cr-new-value">Correct Value</label>
+        <input type="text" id="cr-new-value" placeholder="Enter correct value" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="cr-reason">Reason <span class="optional">(optional)</span></label>
+      <input type="text" id="cr-reason" placeholder="e.g. Spelling mistake during registration" />
+    </div>
+    <div id="cr-error"   class="form-error   hidden"></div>
+    <div id="cr-success" class="form-success hidden"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('modal-correction-request')">Cancel</button>
+      <button class="btn-primary" onclick="submitCorrectionRequest()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: Reject Correction Request Modal -->
+<div id="modal-reject-correction" class="modal-overlay hidden">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h3>Reject Correction Request</h3>
+      <button class="modal-close" onclick="closeModal('modal-reject-correction')">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Provide a reason so the student understands why the request was rejected.</p>
+    <div class="form-group">
+      <label for="reject-cr-reason">Reason <span class="optional">(optional)</span></label>
+      <input type="text" id="reject-cr-reason" placeholder="e.g. Insufficient proof provided" />
+    </div>
+    <input type="hidden" id="reject-cr-id" />
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('modal-reject-correction')">Cancel</button>
+      <button class="btn-primary" style="background:var(--red)" onclick="confirmRejectCorrectionRequest()">Confirm Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div id="modal-forgot-pw" class="modal-overlay hidden">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3>Reset Password</h3>
+      <button class="modal-close" onclick="closeModal('modal-forgot-pw')">✕</button>
+    </div>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6">
+      Enter your email address and we'll send you a link to reset your password.
+    </p>
+    <div class="form-group">
+      <label for="forgot-pw-email">Email Address</label>
+      <input type="email" id="forgot-pw-email" placeholder="your@email.com" />
+    </div>
+    <div id="forgot-pw-error"   class="form-error   hidden"></div>
+    <div id="forgot-pw-success" class="form-success hidden"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('modal-forgot-pw')">Cancel</button>
+      <button class="btn-primary" id="forgot-pw-submit-btn" onclick="handleForgotPassword()">
+        Send Reset Link
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
 <div id="toast" class="toast hidden"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-<script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
