@@ -1015,3 +1015,33 @@ select.locked-field {
 .cr-old   { color: var(--red);  text-decoration: line-through; font-weight: 500; }
 .cr-arrow { color: var(--text-muted); }
 .cr-new   { color: var(--green); font-weight: 600; }
+
+/* ── CSV Download button in modal header ── */
+.btn-download-csv {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-light);
+  border: 1.5px solid var(--green);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.btn-download-csv:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+/* ── Per-row CSV button in courses table ── */
+.btn-action.btn-csv {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+.btn-action.btn-csv:hover {
+  background: var(--green);
+  color: #fff;
+}

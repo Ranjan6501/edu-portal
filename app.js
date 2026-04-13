@@ -18,8 +18,8 @@ import {
 
 // ─── DEPLOYMENT CONFIG (update after deploying) ────────────
 const DEPLOYMENT = {
-  githubRepo: "https://github.com/YOUR_USERNAME/edu-portal",
-  vercelUrl:  "https://edu-portal.vercel.app",
+  githubRepo: "https://github.com/Ranjan6501/edu-portal",
+  vercelUrl:  "https://edu-portal-lyart.vercel.app",
 };
 
 // ─── FIREBASE CONFIG ───────────────────────────────────────
@@ -32,7 +32,6 @@ const firebaseConfig = {
     storageBucket: "edu-portal-ranjan.firebasestorage.app",
     messagingSenderId: "950280364910",
     appId: "1:950280364910:web:fa297e15137298681e577f"
- 
 };
 
 // ─── EMAILJS CONFIG ────────────────────────────────────────
@@ -86,19 +85,28 @@ onAuthStateChanged(auth, async (user) => {
       if (currentUserData.role === "admin") {
         initAdminDashboard();
         showPage("page-admin-dashboard");
+        // Restore last-visited admin tab
+        const savedTab = sessionStorage.getItem("eduportal_admin_tab");
+        if (savedTab) showAdminTab(savedTab);
       } else {
         initStudentDashboard();
         showPage("page-student-dashboard");
+        // Restore last-visited student tab
+        const savedTab = sessionStorage.getItem("eduportal_student_tab");
+        if (savedTab) showStudentTab(savedTab);
       }
     }
   } else {
     currentUser = null;
     currentUserData = null;
-    // Only redirect to landing if not already on an auth page
     const active = document.querySelector(".page.active");
     if (active && ["page-student-dashboard","page-admin-dashboard"].includes(active.id)) {
       showPage("page-landing");
     }
+    // Clear saved state on logout
+    sessionStorage.removeItem("eduportal_page");
+    sessionStorage.removeItem("eduportal_student_tab");
+    sessionStorage.removeItem("eduportal_admin_tab");
   }
 });
 
@@ -110,6 +118,7 @@ window.showPage = (id) => {
   const page = document.getElementById(id);
   if (page) page.classList.add("active");
   window.scrollTo(0, 0);
+  sessionStorage.setItem("eduportal_page", id);
 };
 
 // ── Student auth tab switcher ─────────────────────────────
@@ -416,6 +425,7 @@ window.showStudentTab = (tab) => {
   document.querySelectorAll("#page-student-dashboard .dash-nav-item").forEach(n => n.classList.remove("active"));
   document.getElementById(`tab-${tab}`)?.classList.add("active");
   document.querySelector(`[data-tab="${tab}"]`)?.classList.add("active");
+  sessionStorage.setItem("eduportal_student_tab", tab);
 };
 
 async function loadStudentOverview() {
@@ -516,19 +526,39 @@ window.requestEnrollment = async (courseId) => {
   if (!currentUser || !currentUserData) return;
   const course = allCourses.find(c => c.id === courseId);
   if (!course) return;
-  try {
-    // Check duplicate
-    const q = query(collection(db, "enrollments"),
-      where("studentId", "==", currentUser.uid),
-      where("courseId", "==", courseId)
-    );
-    const existing = await getDocs(q);
-    if (!existing.empty) { showToast("You already requested this course.", "warning"); return; }
 
+  // Check if student already has ANY enrollment (pending or approved)
+  const existingSnap = await getDocs(query(
+    collection(db, "enrollments"),
+    where("studentId", "==", currentUser.uid)
+  ));
+  if (!existingSnap.empty) {
+    const existing = existingSnap.docs[0].data();
+    showToast(
+      `You already have a ${existing.status} enrollment in "${existing.courseName}". Only one course is allowed.`,
+      "warning"
+    );
+    return;
+  }
+
+  // Show confirmation popup
+  document.getElementById("enroll-confirm-course-name").textContent =
+    `${course.name} (${course.code})`;
+  document.getElementById("enroll-confirm-course-id").value = courseId;
+  openModal("modal-enroll-confirm");
+};
+
+window.confirmEnrollment = async () => {
+  const courseId = document.getElementById("enroll-confirm-course-id").value;
+  const course = allCourses.find(c => c.id === courseId);
+  if (!course || !currentUser || !currentUserData) return;
+  closeModal("modal-enroll-confirm");
+  try {
     await addDoc(collection(db, "enrollments"), {
       studentId:    currentUser.uid,
       studentName:  `${currentUserData.firstName} ${currentUserData.lastName}`,
       studentEmail: currentUserData.email,
+      studentPhone: currentUserData.phone || "",
       courseId:     course.id,
       courseName:   course.name,
       courseCode:   course.code,
@@ -857,6 +887,7 @@ window.showAdminTab = (tab) => {
   document.querySelectorAll("#page-admin-dashboard .dash-nav-item").forEach(n => n.classList.remove("active"));
   document.getElementById(`tab-${tab}`)?.classList.add("active");
   document.querySelector(`[data-tab="${tab}"]`)?.classList.add("active");
+  sessionStorage.setItem("eduportal_admin_tab", tab);
 };
 
 async function loadAdminOverview() {
@@ -1158,6 +1189,7 @@ function renderAdminCoursesTable(courses) {
         <td>${c.durationYears || 0} yr(s)</td>
         <td>
           <button class="btn-action btn-view"   onclick="viewCourseStudents('${c.id}')">Students</button>
+          <button class="btn-action btn-csv"    onclick="downloadCourseStudentsCSV('${c.id}')">⬇ CSV</button>
           <button class="btn-action btn-edit"   onclick="openEditCourseModal('${c.id}')">Edit</button>
           <button class="btn-action btn-delete" onclick="deleteCourse('${c.id}')">Delete</button>
         </td>
@@ -1166,6 +1198,9 @@ function renderAdminCoursesTable(courses) {
   </table>`;
 }
 
+// Store the last-viewed course enrollment data for CSV export
+let _csvCourseData = { courseName: "", courseCode: "", enrollments: [] };
+
 window.viewCourseStudents = async (courseId) => {
   const course = allCourses.find(c => c.id === courseId);
   if (!course) return;
@@ -1173,15 +1208,19 @@ window.viewCourseStudents = async (courseId) => {
     `Enrolled Students — ${course.name} (${course.code})`;
   document.getElementById("course-students-content").innerHTML =
     '<div class="loading-state">Loading…</div>';
+  document.getElementById("btn-download-course-csv").classList.add("hidden");
   openModal("modal-course-students");
   try {
     const snap = await getDocs(query(collection(db, "enrollments"), where("courseId", "==", courseId)));
     const enrollments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    _csvCourseData = { courseName: course.name, courseCode: course.code, enrollments };
+
     if (!enrollments.length) {
       document.getElementById("course-students-content").innerHTML =
         '<p style="color:var(--text-muted);font-size:14px;padding:12px 0">No students enrolled in this course yet.</p>';
       return;
     }
+    document.getElementById("btn-download-course-csv").classList.remove("hidden");
     document.getElementById("course-students-content").innerHTML = `
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">${enrollments.length} enrollment record(s)</p>
       <table class="data-table">
@@ -1197,6 +1236,60 @@ window.viewCourseStudents = async (courseId) => {
     document.getElementById("course-students-content").innerHTML =
       `<div class="empty-state">Error: ${err.message}</div>`;
   }
+};
+
+window.downloadCourseStudentsCSV = async (courseId) => {
+  // If called from table row button, fetch fresh; if called from modal use cached
+  let courseName, courseCode, enrollments;
+
+  if (courseId) {
+    // Called directly from course table row — fetch live
+    const course = allCourses.find(c => c.id === courseId);
+    if (!course) return;
+    courseName = course.name;
+    courseCode = course.code;
+    try {
+      const snap = await getDocs(query(collection(db, "enrollments"), where("courseId", "==", courseId)));
+      enrollments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (err) {
+      showToast("Error fetching data: " + err.message, "error");
+      return;
+    }
+  } else {
+    // Called from modal button — use cached data
+    ({ courseName, courseCode, enrollments } = _csvCourseData);
+  }
+
+  if (!enrollments || !enrollments.length) {
+    showToast("No students to download for this course.", "warning");
+    return;
+  }
+
+  // Enrich with student profile data (phone, studentId) from allStudents cache
+  const rows = enrollments.map(e => {
+    const profile = allStudents.find(s => s.id === e.studentId) || {};
+    return [
+      `"${e.studentName   || ""}"`,
+      `"${profile.studentId || e.studentId || ""}"`,
+      `"${e.studentEmail  || ""}"`,
+      `"${profile.phone   || e.studentPhone || ""}"`,
+    ];
+  });
+
+  const headers = ["Student Name", "Student ID", "Email", "Phone Number"];
+  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  // File named: CourseName_CourseCode.csv
+  const fileName = `${courseName}_${courseCode}.csv`.replace(/[^a-zA-Z0-9_\-\.]/g, "_");
+  a.href = url; a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Downloaded: ${fileName}`, "success");
 };
 
 window.openAddCourseModal = () => {
@@ -1309,6 +1402,7 @@ function renderAdminEnrollmentsTable(enrollments) {
       <td><span class="status-badge ${e.status}">${e.status}</span></td>
       <td>${formatDate(e.createdAt)}</td>
       <td>
+        <button class="btn-action btn-view" onclick="viewStudent('${e.studentId}')">View</button>
         ${e.status === "pending" ? `
           <button class="btn-action btn-approve" onclick="approveEnrollment('${e.id}')">Approve</button>
           <button class="btn-action btn-reject"  onclick="rejectEnrollment('${e.id}')">Reject</button>
