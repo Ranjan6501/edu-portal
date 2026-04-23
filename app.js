@@ -18,8 +18,8 @@ import {
 
 // ─── DEPLOYMENT CONFIG (update after deploying) ────────────
 const DEPLOYMENT = {
-  githubRepo: "https://github.com/Ranjan6501/edu-portal",
-  vercelUrl:  "https://edu-portal-lyart.vercel.app",
+   githubRepo: "https://github.com/Ranjan6501/edu-portal",
+   vercelUrl:  "https://edu-portal-lyart.vercel.app",
 };
 
 // ─── FIREBASE CONFIG ───────────────────────────────────────
@@ -45,8 +45,14 @@ const EMAILJS_CONFIG = {
 };
 
 // ─── ADMIN EMAILS ──────────────────────────────────────────
-// Add your admin email(s) here. These accounts get admin access.
 const ADMIN_EMAILS = ["ranjanpradhan6501@gmail.com"];
+
+// ─── CLOUDINARY CONFIG ─────────────────────────────────────
+// ⚠️  Fill in your Cloud Name and Upload Preset after setup
+const CLOUDINARY = {
+  cloudName:    "dx3b6fs3k",    // e.g. "dxyz1234"
+  uploadPreset: "Student_uploads", // e.g. "eduportal"
+};
 
 // ═══════════════════════════════════════════════════════════
 //  INITIALIZATION
@@ -54,12 +60,34 @@ const ADMIN_EMAILS = ["ranjanpradhan6501@gmail.com"];
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+// (Firebase Storage removed — using Cloudinary instead)
 
 // Load EmailJS
 const ejsScript = document.createElement("script");
 ejsScript.src = "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
 ejsScript.onload = () => emailjs.init(EMAILJS_CONFIG.publicKey);
 document.head.appendChild(ejsScript);
+
+// ═══════════════════════════════════════════════════════════
+//  CLOUDINARY UPLOAD HELPER
+// ═══════════════════════════════════════════════════════════
+// Uploads any File or Blob to Cloudinary; returns the secure URL.
+async function uploadToCloudinary(fileOrBlob, folder, fileName) {
+  const formData = new FormData();
+  formData.append("file", fileOrBlob, fileName || "file");
+  formData.append("upload_preset", CLOUDINARY.uploadPreset);
+  formData.append("folder", `eduportal/${folder}`);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY.cloudName}/auto/upload`,
+    { method: "POST", body: formData }
+  );
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || "Upload failed");
+  }
+  return (await res.json()).secure_url;
+}
 
 // ═══════════════════════════════════════════════════════════
 //  GLOBAL STATE
@@ -160,6 +188,24 @@ document.addEventListener("DOMContentLoaded", () => {
     indicator.style.width = signinBtn.offsetWidth + "px";
     indicator.style.transform = "translateX(0)";
   }
+
+  // Show/hide JEE or GATE rank field based on program selection in signup
+  const regProgram = document.getElementById("reg-program");
+  if (regProgram) {
+    regProgram.addEventListener("change", () => {
+      const val = regProgram.value;
+      document.getElementById("reg-jee-group").classList.toggle("hidden",  val !== "Undergraduate");
+      document.getElementById("reg-gate-group").classList.toggle("hidden", val !== "Postgraduate");
+    });
+  }
+
+  // Auto-format Aadhaar number with spaces: XXXX XXXX XXXX
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "prof-aadhar") {
+      let v = e.target.value.replace(/\D/g, "").slice(0, 12);
+      e.target.value = v.replace(/(\d{4})(?=\d)/g, "$1 ");
+    }
+  });
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -238,15 +284,19 @@ window.closeModal = (id) => document.getElementById(id)?.classList.add("hidden")
 window.handleRegister = async (e) => {
   e.preventDefault();
   hideError("register-error");
-  const firstName  = document.getElementById("reg-firstname").value.trim();
-  const lastName   = document.getElementById("reg-lastname").value.trim();
-  const email      = document.getElementById("reg-email").value.trim();
-  const studentId  = document.getElementById("reg-studentid").value.trim();
-  const program    = document.getElementById("reg-program").value;
-  const dob        = document.getElementById("reg-dob").value;
-  const password   = document.getElementById("reg-password").value;
-  const password2  = document.getElementById("reg-password2").value;
+  const firstName   = document.getElementById("reg-firstname").value.trim();
+  const lastName    = document.getElementById("reg-lastname").value.trim();
+  const email       = document.getElementById("reg-email").value.trim();
+  const studentId   = document.getElementById("reg-studentid").value.trim();
+  const program     = document.getElementById("reg-program").value;
+  const dob         = document.getElementById("reg-dob").value;
+  const jeeRank     = document.getElementById("reg-jeerank").value.trim();
+  const gateRank    = document.getElementById("reg-gaterank").value.trim();
+  const declaration = document.getElementById("reg-declaration").checked;
+  const password    = document.getElementById("reg-password").value;
+  const password2   = document.getElementById("reg-password2").value;
 
+  if (!declaration) return showError("register-error", "You must accept the declaration before registering.");
   if (password !== password2) return showError("register-error", "Passwords do not match.");
   if (password.length < 8)    return showError("register-error", "Password must be at least 8 characters.");
 
@@ -256,6 +306,8 @@ window.handleRegister = async (e) => {
     await setDoc(doc(db, "users", cred.user.uid), {
       firstName, lastName, email, program, dob,
       studentId: studentId || "",
+      jeeRank:   program === "Undergraduate" ? (jeeRank || "") : "",
+      gateRank:  program === "Postgraduate"  ? (gateRank || "") : "",
       phone: "",
       role: "student",
       createdAt: serverTimestamp(),
@@ -383,7 +435,17 @@ function initStudentDashboard() {
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   document.getElementById("student-greeting").textContent = `${greeting}, ${firstName}!`;
   document.getElementById("student-subline").textContent  = "Here's your academic summary";
-  document.getElementById("student-avatar").textContent   = firstName[0].toUpperCase();
+
+  // Avatar: show profile picture if available, else initials
+  const avatarEl = document.getElementById("student-avatar");
+  if (currentUserData.profilePicUrl) {
+    avatarEl.style.backgroundImage = `url(${currentUserData.profilePicUrl})`;
+    avatarEl.style.backgroundSize = "cover";
+    avatarEl.style.backgroundPosition = "center";
+    avatarEl.textContent = "";
+  } else {
+    avatarEl.textContent = firstName[0].toUpperCase();
+  }
 
   // Pre-fill profile form — Personal Information
   document.getElementById("prof-firstname").value      = firstName;
@@ -396,6 +458,36 @@ function initStudentDashboard() {
   document.getElementById("prof-gender").value         = currentUserData.gender || "";
   document.getElementById("prof-guardian-name").value  = currentUserData.guardianName || "";
   document.getElementById("prof-guardian-phone").value = currentUserData.guardianPhone || "";
+  document.getElementById("prof-aadhar").value         = currentUserData.aadhar || "";
+
+  // Show JEE or GATE rank based on program
+  const prog = currentUserData.program || "";
+  if (prog === "Undergraduate") {
+    document.getElementById("prof-jee-group").style.display = "";
+    document.getElementById("prof-gate-group").style.display = "none";
+    document.getElementById("prof-jeerank").value = currentUserData.jeeRank || "";
+  } else if (prog === "Postgraduate") {
+    document.getElementById("prof-gate-group").style.display = "";
+    document.getElementById("prof-jee-group").style.display = "none";
+    document.getElementById("prof-gaterank").value = currentUserData.gateRank || "";
+  }
+
+  // Profile picture in form
+  const picCircle   = document.getElementById("profile-pic-circle");
+  const picImg      = document.getElementById("profile-pic-img");
+  const picInitials = document.getElementById("profile-pic-initials");
+  const removeBtn   = document.getElementById("btn-remove-pic");
+  if (currentUserData.profilePicUrl) {
+    picImg.src = currentUserData.profilePicUrl;
+    picImg.classList.remove("hidden");
+    picInitials.classList.add("hidden");
+    removeBtn.classList.remove("hidden");
+  } else {
+    picInitials.textContent = firstName[0].toUpperCase();
+    picImg.classList.add("hidden");
+    picInitials.classList.remove("hidden");
+    removeBtn.classList.add("hidden");
+  }
 
   // Pre-fill Address Information
   document.getElementById("prof-state").value    = currentUserData.addrState || "";
@@ -414,6 +506,18 @@ function initStudentDashboard() {
   document.getElementById("prof-10-percentage").value  = currentUserData.acad10Percentage || "";
   document.getElementById("prof-10-institution").value = currentUserData.acad10Institution || "";
   document.getElementById("prof-10-passout").value     = currentUserData.acad10Passout || "";
+
+  // Show document view links if already uploaded
+  const docs = {
+    "link-12-marksheet": currentUserData.doc12Marksheet,
+    "link-12-cert":      currentUserData.doc12Cert,
+    "link-10-marksheet": currentUserData.doc10Marksheet,
+    "link-10-cert":      currentUserData.doc10Cert,
+  };
+  Object.entries(docs).forEach(([id, url]) => {
+    const el = document.getElementById(id);
+    if (el && url) { el.href = url; el.classList.remove("hidden"); }
+  });
 
   loadStudentOverview();
   loadStudentCourses();
@@ -457,6 +561,18 @@ async function loadStudentOverview() {
   }).join("");
 }
 
+// ─── PROFILE COMPLETENESS CHECK ──────────────────────────
+function isProfileComplete(d) {
+  const required = [
+    "phone","gender","guardianName","guardianPhone","aadhar",
+    "addrState","addrDistrict","addrPincode","addrVillage",
+    "acad12Board","acad12Percentage","acad12Institution","acad12Passout",
+    "acad10Board","acad10Percentage","acad10Institution","acad10Passout",
+  ];
+  const missing = required.filter(k => !d[k] || String(d[k]).trim() === "");
+  return { complete: missing.length === 0, missing };
+}
+
 async function loadStudentCourses() {
   const grid = document.getElementById("courses-grid");
   grid.innerHTML = '<div class="loading-state">Loading courses…</div>';
@@ -464,26 +580,48 @@ async function loadStudentCourses() {
     const snap = await getDocs(collection(db, "courses"));
     allCourses = [];
     snap.forEach(d => allCourses.push({ id: d.id, ...d.data() }));
-    // Also load student's enrollments to check statuses
     const eq = query(collection(db, "enrollments"), where("studentId", "==", currentUser.uid));
     const eSnap = await getDocs(eq);
-    enrolledCourseIds = {};  // update global state
+    enrolledCourseIds = {};
     eSnap.forEach(d => { enrolledCourseIds[d.data().courseId] = d.data().status; });
-    renderCoursesGrid(allCourses, enrolledCourseIds);
+
+    // Check profile completeness and show banner
+    const { complete, missing } = isProfileComplete(currentUserData || {});
+    const banner = document.getElementById("profile-incomplete-banner");
+    if (banner) {
+      if (!complete) {
+        banner.classList.remove("hidden");
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    // Auto-filter to student's program and set dropdown
+    const prog = currentUserData?.program || "";
+    const deptFilter = document.getElementById("course-dept-filter");
+    if (deptFilter && prog) deptFilter.value = prog;
+
+    const filtered = prog
+      ? allCourses.filter(c => c.program === prog)
+      : allCourses;
+
+    renderCoursesGrid(filtered, enrolledCourseIds, complete);
   } catch (err) {
     grid.innerHTML = `<div class="empty-state">Error loading courses: ${err.message}</div>`;
   }
 }
 
-function renderCoursesGrid(courses, enrolledMap = {}) {
+function renderCoursesGrid(courses, enrolledMap = {}, profileComplete = true) {
   const grid = document.getElementById("courses-grid");
-  if (!courses.length) { grid.innerHTML = '<div class="empty-state">No courses found.</div>'; return; }
+  if (!courses.length) { grid.innerHTML = '<div class="empty-state">No courses found for your program.</div>'; return; }
   grid.innerHTML = courses.map(c => {
     const pct = Math.round(((c.enrolled || 0) / (c.capacity || 1)) * 100);
     const fillClass = pct >= 100 ? "full" : pct >= 80 ? "warn" : "";
     const status = enrolledMap[c.id];
     let btnHtml;
-    if (status === "approved") {
+    if (!profileComplete) {
+      btnHtml = `<button class="btn-enroll profile-incomplete-btn" onclick="showStudentTab('profile')">Complete Profile First</button>`;
+    } else if (status === "approved") {
       btnHtml = `<button class="btn-enroll" disabled>✓ Enrolled</button>`;
     } else if (status === "pending") {
       btnHtml = `<button class="btn-enroll pending" disabled>⏳ Pending Approval</button>`;
@@ -514,12 +652,13 @@ function renderCoursesGrid(courses, enrolledMap = {}) {
 window.filterCourses = () => {
   const q    = document.getElementById("course-search").value.toLowerCase();
   const dept = document.getElementById("course-dept-filter").value;
+  const { complete } = isProfileComplete(currentUserData || {});
   const filtered = allCourses.filter(c => {
     const matchQ = !q || c.name?.toLowerCase().includes(q) || c.code?.toLowerCase().includes(q);
     const matchD = !dept || c.program === dept;
     return matchQ && matchD;
   });
-  renderCoursesGrid(filtered, enrolledCourseIds);  // preserve enrollment status after filter
+  renderCoursesGrid(filtered, enrolledCourseIds, complete);
 };
 
 window.requestEnrollment = async (courseId) => {
@@ -629,39 +768,141 @@ window.dropEnrollment = async (enrollmentId) => {
 // ─── UPDATE PROFILE ───────────────────────────────────────
 window.handleUpdateProfile = async (e) => {
   e.preventDefault();
-  const data = {
-    // Editable personal fields only (locked fields managed by admin)
-    phone:          document.getElementById("prof-phone").value.trim(),
-    gender:         document.getElementById("prof-gender").value,
-    guardianName:   document.getElementById("prof-guardian-name").value.trim(),
-    guardianPhone:  document.getElementById("prof-guardian-phone").value.trim(),
-    // Address Information
-    addrState:      document.getElementById("prof-state").value.trim(),
-    addrDistrict:   document.getElementById("prof-district").value.trim(),
-    addrPincode:    document.getElementById("prof-pincode").value.trim(),
-    addrVillage:    document.getElementById("prof-village").value.trim(),
-    // Academic Information — 12th
-    acad12Board:        document.getElementById("prof-12-board").value.trim(),
-    acad12Percentage:   document.getElementById("prof-12-percentage").value,
-    acad12Institution:  document.getElementById("prof-12-institution").value.trim(),
-    acad12Passout:      document.getElementById("prof-12-passout").value,
-    // Academic Information — 10th
-    acad10Board:        document.getElementById("prof-10-board").value.trim(),
-    acad10Percentage:   document.getElementById("prof-10-percentage").value,
-    acad10Institution:  document.getElementById("prof-10-institution").value.trim(),
-    acad10Passout:      document.getElementById("prof-10-passout").value,
-  };
+  const saveBtn = e.target.querySelector(".btn-submit");
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = "Saving…"; }
+
   try {
+    // Upload academic documents to Cloudinary if new files selected
+    const fileUploads = [
+      { inputId: "prof-12-marksheet", storageKey: "doc12Marksheet", label: "12th Marksheet" },
+      { inputId: "prof-12-cert",      storageKey: "doc12Cert",      label: "12th Certificate" },
+      { inputId: "prof-10-marksheet", storageKey: "doc10Marksheet", label: "10th Marksheet" },
+      { inputId: "prof-10-cert",      storageKey: "doc10Cert",      label: "10th Certificate" },
+    ];
+    const docUrls = {};
+    for (const f of fileUploads) {
+      const input = document.getElementById(f.inputId);
+      if (input?.files?.[0]) {
+        const file = input.files[0];
+        if (file.size > 5 * 1024 * 1024) { showToast(`${f.label}: File too large (max 5MB).`, "error"); continue; }
+        showToast(`Uploading ${f.label}…`, "");
+        docUrls[f.storageKey] = await uploadToCloudinary(
+          file,
+          `documents/${currentUser.uid}`,
+          `${f.inputId}_${Date.now()}`
+        );
+        // Show the view link immediately
+        const linkEl = document.getElementById(f.inputId.replace("prof-", "link-"));
+        if (linkEl) { linkEl.href = docUrls[f.storageKey]; linkEl.classList.remove("hidden"); }
+      }
+    }
+
+    const data = {
+      // Editable personal fields only (locked fields managed by admin)
+      phone:          document.getElementById("prof-phone").value.trim(),
+      gender:         document.getElementById("prof-gender").value,
+      guardianName:   document.getElementById("prof-guardian-name").value.trim(),
+      guardianPhone:  document.getElementById("prof-guardian-phone").value.trim(),
+      aadhar:         document.getElementById("prof-aadhar").value.replace(/\s/g,"").trim(),
+      // Address Information
+      addrState:      document.getElementById("prof-state").value.trim(),
+      addrDistrict:   document.getElementById("prof-district").value.trim(),
+      addrPincode:    document.getElementById("prof-pincode").value.trim(),
+      addrVillage:    document.getElementById("prof-village").value.trim(),
+      // Academic Information — 12th
+      acad12Board:        document.getElementById("prof-12-board").value.trim(),
+      acad12Percentage:   document.getElementById("prof-12-percentage").value,
+      acad12Institution:  document.getElementById("prof-12-institution").value.trim(),
+      acad12Passout:      document.getElementById("prof-12-passout").value,
+      // Academic Information — 10th
+      acad10Board:        document.getElementById("prof-10-board").value.trim(),
+      acad10Percentage:   document.getElementById("prof-10-percentage").value,
+      acad10Institution:  document.getElementById("prof-10-institution").value.trim(),
+      acad10Passout:      document.getElementById("prof-10-passout").value,
+      ...docUrls,
+    };
     await updateDoc(doc(db, "users", currentUser.uid), data);
     currentUserData = { ...currentUserData, ...data };
     showSuccess("profile-msg", "✓ Profile updated successfully.");
     showToast("Profile saved!", "success");
   } catch (err) {
     showToast("Error: " + err.message, "error");
+  } finally {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = "Save Changes"; }
   }
 };
 
-// ─── CHANGE PASSWORD ──────────────────────────────────────
+// ─── PROFILE PICTURE ──────────────────────────────────────
+window.handleProfilePicSelect = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast("Image too large. Max 2MB.", "error"); return; }
+
+  // Compress using canvas before uploading
+  const reader = new FileReader();
+  reader.onload = async (re) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement("canvas");
+      const MAX = 300;
+      const ratio = Math.min(MAX / img.width, MAX / img.height);
+      canvas.width  = img.width  * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async (blob) => {
+        try {
+          showToast("Uploading photo…", "");
+          const url = await uploadToCloudinary(
+            blob,
+            "profile-pics",
+            `${currentUser.uid}_${Date.now()}.jpg`
+          );
+          await updateDoc(doc(db, "users", currentUser.uid), { profilePicUrl: url });
+          currentUserData.profilePicUrl = url;
+          // Update UI
+          const picImg = document.getElementById("profile-pic-img");
+          picImg.src = url; picImg.classList.remove("hidden");
+          document.getElementById("profile-pic-initials").classList.add("hidden");
+          document.getElementById("btn-remove-pic").classList.remove("hidden");
+          // Update sidebar avatar
+          const avatarEl = document.getElementById("student-avatar");
+          avatarEl.style.backgroundImage = `url(${url})`;
+          avatarEl.style.backgroundSize = "cover";
+          avatarEl.style.backgroundPosition = "center";
+          avatarEl.textContent = "";
+          showToast("Profile picture updated!", "success");
+        } catch (err) { showToast("Upload failed: " + err.message, "error"); }
+      }, "image/jpeg", 0.85);
+    };
+    img.src = re.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeProfilePic = async () => {
+  if (!confirm("Remove your profile picture?")) return;
+  try {
+    // Just clear the URL in Firestore (Cloudinary unsigned uploads can't be deleted client-side)
+    await updateDoc(doc(db, "users", currentUser.uid), { profilePicUrl: "" });
+    currentUserData.profilePicUrl = "";
+    document.getElementById("profile-pic-img").classList.add("hidden");
+    document.getElementById("profile-pic-initials").classList.remove("hidden");
+    document.getElementById("btn-remove-pic").classList.add("hidden");
+    const avatarEl = document.getElementById("student-avatar");
+    avatarEl.style.backgroundImage = "";
+    avatarEl.textContent = currentUserData.firstName[0].toUpperCase();
+    showToast("Profile picture removed.", "success");
+  } catch (err) { showToast("Error: " + err.message, "error"); }
+};
+
+// ─── FILE SELECT LABEL HELPER ────────────────────────────
+window.handleFileSelect = (inputId, labelId) => {
+  const file = document.getElementById(inputId)?.files?.[0];
+  const label = document.getElementById(labelId);
+  if (label) label.textContent = file ? file.name : "No file chosen";
+};
+
+
 window.handleChangePassword = async (e) => {
   e.preventDefault();
   hideError("pw-error");
@@ -691,10 +932,27 @@ const LOCKED_FIELD_LABELS = {
   studentId: "Student ID",
   program:   "Program",
   dob:       "Date of Birth",
+  jeeRank:   "JEE Rank",
+  gateRank:  "GATE Rank",
 };
 
 window.openCorrectionRequest = () => {
-  document.getElementById("cr-field").value      = "";
+  // Populate field options based on student's program
+  const prog = currentUserData?.program || "";
+  const rankOption = prog === "Undergraduate"
+    ? `<option value="jeeRank">JEE Rank</option>`
+    : prog === "Postgraduate"
+    ? `<option value="gateRank">GATE Rank</option>`
+    : `<option value="jeeRank">JEE Rank</option><option value="gateRank">GATE Rank</option>`;
+  document.getElementById("cr-field").innerHTML = `
+    <option value="">— Select a field —</option>
+    <option value="firstName">First Name</option>
+    <option value="lastName">Last Name</option>
+    <option value="studentId">Student ID</option>
+    <option value="program">Program</option>
+    <option value="dob">Date of Birth</option>
+    ${rankOption}
+  `;
   document.getElementById("cr-current").value    = "";
   document.getElementById("cr-new-value").value  = "";
   document.getElementById("cr-reason").value     = "";
@@ -890,6 +1148,10 @@ window.showAdminTab = (tab) => {
   sessionStorage.setItem("eduportal_admin_tab", tab);
 };
 
+// ── Overview pending list sort state ──────────────────────
+let _pendingSortDir = "";   // "" | "asc" | "desc"
+let _pendingRankMap = {};   // studentId → numeric rank
+
 async function loadAdminOverview() {
   try {
     const [studentsSnap, coursesSnap, enrollSnap] = await Promise.all([
@@ -899,6 +1161,15 @@ async function loadAdminOverview() {
     ]);
     let pending = 0, approved = 0;
     allPendingItems = [];
+
+    // Build rank lookup map: studentUid → numeric JEE/GATE rank
+    _pendingRankMap = {};
+    studentsSnap.forEach(d => {
+      const u = d.data();
+      const rank = parseInt(u.jeeRank || u.gateRank || "") || 0;
+      if (rank) _pendingRankMap[d.id] = rank;
+    });
+
     enrollSnap.forEach(d => {
       const e = d.data();
       if (e.status === "pending")  { pending++; allPendingItems.push({ id: d.id, ...e }); }
@@ -917,35 +1188,70 @@ async function loadAdminOverview() {
         courseNames.map(n => `<option value="${n}">${n}</option>`).join("");
     }
 
-    renderAdminOverviewPending(allPendingItems);
+    applyOverviewFiltersAndSort();
   } catch (err) { console.error("loadAdminOverview:", err); }
 }
+
+// Single function: filter + sort pending list, then render
+function applyOverviewFiltersAndSort() {
+  const course  = document.getElementById("adm-overview-course-filter")?.value  || "";
+  const program = document.getElementById("adm-overview-program-filter")?.value || "";
+
+  let result = allPendingItems.filter(e =>
+    (!course  || e.courseName === course) &&
+    (!program || e.program    === program)
+  );
+
+  if (_pendingSortDir === "asc") {
+    result = result.sort((a, b) =>
+      (_pendingRankMap[a.studentId] || 999999) - (_pendingRankMap[b.studentId] || 999999)
+    );
+  } else if (_pendingSortDir === "desc") {
+    result = result.sort((a, b) =>
+      (_pendingRankMap[b.studentId] || 0) - (_pendingRankMap[a.studentId] || 0)
+    );
+  }
+
+  renderAdminOverviewPending(result);
+}
+
+window.filterAdminOverview = () => applyOverviewFiltersAndSort();
+
+window.sortPendingByRank = () => {
+  // Cycle: none → asc → desc → none
+  _pendingSortDir = _pendingSortDir === ""     ? "asc"
+                 : _pendingSortDir === "asc"   ? "desc"
+                 : "";
+
+  const btn   = document.getElementById("adm-rank-sort-btn");
+  const label = { "": "🏆 Rank", "asc": "🏆 Rank ↑", "desc": "🏆 Rank ↓" }[_pendingSortDir];
+  if (btn) {
+    btn.textContent = label;
+    btn.classList.toggle("active", _pendingSortDir !== "");
+  }
+  applyOverviewFiltersAndSort();
+};
 
 function renderAdminOverviewPending(items) {
   const list = document.getElementById("adm-pending-list");
   if (!items.length) { list.innerHTML = '<div class="empty-state">No pending requests.</div>'; return; }
-  list.innerHTML = items.slice(0, 8).map(e => `
-    <div class="pending-item">
+  list.innerHTML = items.map(e => {
+    const rank = _pendingRankMap[e.studentId];
+    const rankTag = rank
+      ? `<span class="rank-tag">${e.program === "Postgraduate" ? "GATE" : "JEE"} ${rank}</span>`
+      : "";
+    return `<div class="pending-item">
       <div>
-        <div class="pending-student">${e.studentName}</div>
+        <div class="pending-student">${e.studentName} ${rankTag}</div>
         <div class="pending-meta">${e.studentEmail} · <strong>${e.courseName}</strong> (${e.courseCode}) · ${timeAgo(e.createdAt)}</div>
       </div>
       <div class="pending-actions">
         <button class="btn-action btn-approve" onclick="approveEnrollment('${e.id}')">Approve</button>
         <button class="btn-action btn-reject"  onclick="rejectEnrollment('${e.id}')">Reject</button>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
-
-window.filterAdminOverview = () => {
-  const course  = document.getElementById("adm-overview-course-filter").value;
-  const program = document.getElementById("adm-overview-program-filter").value;
-  const filtered = allPendingItems.filter(e =>
-    (!course  || e.courseName === course) &&
-    (!program || e.program    === program)
-  );
-  renderAdminOverviewPending(filtered);
-};
 
 async function loadAdminStudents() {
   const wrap = document.getElementById("admin-students-table");
@@ -1039,6 +1345,15 @@ window.viewStudent = async (uid) => {
   if (!s) return;
   const eSnap = await getDocs(query(collection(db, "enrollments"), where("studentId", "==", uid)));
   const enrollments = eSnap.docs.map(d => d.data());
+  const rankField = s.program === "Undergraduate"
+    ? `<div class="form-group"><label>JEE Rank</label><input type="text" id="admin-edit-jeerank" value="${s.jeeRank || ""}" class="admin-core-input" /></div>`
+    : s.program === "Postgraduate"
+    ? `<div class="form-group"><label>GATE Rank</label><input type="text" id="admin-edit-gaterank" value="${s.gateRank || ""}" class="admin-core-input" /></div>`
+    : "";
+  const docLink = (url, label) => url
+    ? `<a href="${url}" target="_blank" class="file-view-link" style="font-size:13px">📄 ${label} ↗</a>`
+    : `<span style="color:var(--text-muted);font-size:13px">—</span>`;
+
   document.getElementById("student-detail-content").innerHTML = `
     <div class="student-detail">
 
@@ -1069,6 +1384,7 @@ window.viewStudent = async (uid) => {
           <label>Date of Birth</label>
           <input type="date" id="admin-edit-dob" value="${s.dob || ""}" class="admin-core-input" />
         </div>
+        ${rankField}
       </div>
       <div id="admin-core-edit-msg" class="form-success hidden" style="margin:6px 0 2px"></div>
       <button class="btn-primary" style="margin-bottom:20px" onclick="adminSaveCoreInfo('${uid}')">Save Core Info</button>
@@ -1079,6 +1395,7 @@ window.viewStudent = async (uid) => {
         <div><div class="detail-label">Email</div><div class="detail-value">${s.email}</div></div>
         <div><div class="detail-label">Phone</div><div class="detail-value">${s.phone || "—"}</div></div>
         <div><div class="detail-label">Gender</div><div class="detail-value">${s.gender || "—"}</div></div>
+        <div><div class="detail-label">Aadhaar</div><div class="detail-value">${s.aadhar || "—"}</div></div>
         <div><div class="detail-label">Guardian Name</div><div class="detail-value">${s.guardianName || "—"}</div></div>
         <div><div class="detail-label">Guardian Phone</div><div class="detail-value">${s.guardianPhone || "—"}</div></div>
         <div><div class="detail-label">Registered</div><div class="detail-value">${formatDate(s.createdAt)}</div></div>
@@ -1101,6 +1418,8 @@ window.viewStudent = async (uid) => {
         <div><div class="detail-label">Percentage</div><div class="detail-value">${s.acad12Percentage ? s.acad12Percentage + "%" : "—"}</div></div>
         <div><div class="detail-label">Institution</div><div class="detail-value">${s.acad12Institution || "—"}</div></div>
         <div><div class="detail-label">Passout Year</div><div class="detail-value">${s.acad12Passout || "—"}</div></div>
+        <div><div class="detail-label">Marksheet</div><div class="detail-value">${docLink(s.doc12Marksheet, "View Marksheet")}</div></div>
+        <div><div class="detail-label">Certificate</div><div class="detail-value">${docLink(s.doc12Cert, "View Certificate")}</div></div>
       </div>
       <div class="detail-subsection-title">10th Standard</div>
       <div class="student-detail-grid">
@@ -1108,6 +1427,8 @@ window.viewStudent = async (uid) => {
         <div><div class="detail-label">Percentage</div><div class="detail-value">${s.acad10Percentage ? s.acad10Percentage + "%" : "—"}</div></div>
         <div><div class="detail-label">Institution</div><div class="detail-value">${s.acad10Institution || "—"}</div></div>
         <div><div class="detail-label">Passout Year</div><div class="detail-value">${s.acad10Passout || "—"}</div></div>
+        <div><div class="detail-label">Marksheet</div><div class="detail-value">${docLink(s.doc10Marksheet, "View Marksheet")}</div></div>
+        <div><div class="detail-label">Certificate</div><div class="detail-value">${docLink(s.doc10Cert, "View Certificate")}</div></div>
       </div>
 
       <!-- Courses -->
@@ -1127,6 +1448,8 @@ window.adminSaveCoreInfo = async (uid) => {
   const studentId = document.getElementById("admin-edit-studentid").value.trim();
   const program   = document.getElementById("admin-edit-program").value;
   const dob       = document.getElementById("admin-edit-dob").value;
+  const jeeRank   = document.getElementById("admin-edit-jeerank")?.value.trim()  || undefined;
+  const gateRank  = document.getElementById("admin-edit-gaterank")?.value.trim() || undefined;
   const msgEl     = document.getElementById("admin-core-edit-msg");
 
   if (!firstName || !lastName) {
@@ -1136,10 +1459,12 @@ window.adminSaveCoreInfo = async (uid) => {
     return;
   }
   try {
-    await updateDoc(doc(db, "users", uid), { firstName, lastName, studentId, program, dob });
-    // Update local cache so the table reflects the change without a full reload
+    const updateData = { firstName, lastName, studentId, program, dob };
+    if (jeeRank  !== undefined) updateData.jeeRank  = jeeRank;
+    if (gateRank !== undefined) updateData.gateRank = gateRank;
+    await updateDoc(doc(db, "users", uid), updateData);
     const idx = allStudents.findIndex(s => s.id === uid);
-    if (idx !== -1) allStudents[idx] = { ...allStudents[idx], firstName, lastName, studentId, program, dob };
+    if (idx !== -1) allStudents[idx] = { ...allStudents[idx], ...updateData };
     msgEl.textContent = "✓ Core information updated successfully.";
     msgEl.className = "form-success";
     msgEl.classList.remove("hidden");

@@ -60,9 +60,7 @@
       <h1 class="landing-right-title">
        Odisha University<br><em>of Technology</em><br>and Research.
       </h1>
-      <p class="landing-right-sub">
-       
-      </p>
+      
 
       <div class="landing-right-actions">
         <button class="btn-landing-primary" onclick="showPage('page-student-auth'); switchAuthTab('signup')">
@@ -185,6 +183,16 @@
             <label for="reg-dob">Date of Birth</label>
             <input type="date" id="reg-dob" required />
           </div>
+          <!-- JEE Rank — shown for Undergraduate -->
+          <div class="form-group hidden" id="reg-jee-group">
+            <label for="reg-jeerank">JEE Rank</label>
+            <input type="number" id="reg-jeerank" placeholder="e.g. 12500" min="1" />
+          </div>
+          <!-- GATE Rank — shown for Postgraduate -->
+          <div class="form-group hidden" id="reg-gate-group">
+            <label for="reg-gaterank">GATE Rank</label>
+            <input type="number" id="reg-gaterank" placeholder="e.g. 850" min="1" />
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label for="reg-password">Password</label>
@@ -202,6 +210,12 @@
             </div>
           </div>
           <div id="register-error" class="form-error hidden"></div>
+          <div class="declaration-box">
+            <label class="declaration-label">
+              <input type="checkbox" id="reg-declaration" required />
+              <span>I hereby declare that all the information provided by me is true, correct and complete to the best of my knowledge and belief. I understand that any false or misleading information may result in disqualification of my application.</span>
+            </label>
+          </div>
           <button type="submit" class="btn-submit" id="register-submit-btn">
             <span class="btn-text">Create Account →</span>
             <span class="btn-loader hidden">⟳</span>
@@ -342,9 +356,26 @@
           <div class="section-card">
             <h3 class="section-card-title">Personal Information</h3>
             <div class="locked-fields-notice">
-              🔒 First Name, Last Name, Student ID, Program and Date of Birth are locked.
+              🔒 First Name, Last Name, Student ID, Program, Date of Birth and JEE/GATE Rank are locked.
               <button type="button" class="btn-request-correction" onclick="openCorrectionRequest()">Request a Correction →</button>
             </div>
+
+            <!-- Profile Picture -->
+            <div class="profile-pic-section">
+              <div class="profile-pic-wrap">
+                <div class="profile-pic-circle" id="profile-pic-circle">
+                  <span id="profile-pic-initials">?</span>
+                  <img id="profile-pic-img" class="hidden" alt="Profile" />
+                </div>
+                <div class="profile-pic-actions">
+                  <button type="button" class="btn-upload-pic" onclick="document.getElementById('prof-pic-input').click()">Upload Photo</button>
+                  <button type="button" class="btn-ghost btn-remove-pic hidden" id="btn-remove-pic" onclick="removeProfilePic()">Remove</button>
+                  <p class="upload-hint">JPG or PNG · Max 2MB</p>
+                </div>
+              </div>
+              <input type="file" id="prof-pic-input" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleProfilePicSelect(event)" />
+            </div>
+
             <div class="form-row">
               <div class="form-group">
                 <label for="prof-firstname">First Name</label>
@@ -359,20 +390,31 @@
               <label for="prof-email">Email Address</label>
               <input type="email" id="prof-email" disabled />
             </div>
-            <div class="form-group">
-              <label for="prof-studentid">Student ID</label>
-              <input type="text" id="prof-studentid" disabled class="locked-field" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-studentid">Student ID</label>
+                <input type="text" id="prof-studentid" disabled class="locked-field" />
+              </div>
+              <div class="form-group">
+                <label for="prof-program">Program</label>
+                <select id="prof-program" disabled class="locked-field">
+                  <option value="">Select Program</option>
+                  <option>Undergraduate</option>
+                  <option>Postgraduate</option>
+                </select>
+              </div>
+            </div>
+            <!-- JEE / GATE Rank (locked, shown based on program) -->
+            <div class="form-group" id="prof-jee-group" style="display:none">
+              <label for="prof-jeerank">JEE Rank</label>
+              <input type="text" id="prof-jeerank" disabled class="locked-field" />
+            </div>
+            <div class="form-group" id="prof-gate-group" style="display:none">
+              <label for="prof-gaterank">GATE Rank</label>
+              <input type="text" id="prof-gaterank" disabled class="locked-field" />
             </div>
             <div class="form-group">
-              <label for="prof-program">Program</label>
-              <select id="prof-program" disabled class="locked-field">
-                <option value="">Select Program</option>
-                <option>Undergraduate</option>
-                <option>Postgraduate</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="prof-phone">Phone Number </label>
+              <label for="prof-phone">Phone Number</label>
               <input type="tel" id="prof-phone" placeholder="+91" />
             </div>
             <div class="form-row">
@@ -398,6 +440,12 @@
               <div class="form-group">
                 <label for="prof-guardian-phone">Guardian Phone Number</label>
                 <input type="tel" id="prof-guardian-phone" placeholder="+91" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prof-aadhar">Aadhaar Number</label>
+                <input type="text" id="prof-aadhar" placeholder="XXXX XXXX XXXX" maxlength="14" />
               </div>
             </div>
           </div>
@@ -453,6 +501,26 @@
                 <input type="number" id="prof-12-passout" placeholder="e.g. 2022" min="1990" max="2099" />
               </div>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Marksheet <span class="optional">(PDF/Image)</span></label>
+                <div class="file-upload-wrap">
+                  <input type="file" id="prof-12-marksheet" accept=".pdf,image/*" class="hidden" onchange="handleFileSelect('prof-12-marksheet','lbl-12-marksheet')" />
+                  <button type="button" class="btn-file-upload" onclick="document.getElementById('prof-12-marksheet').click()">📎 Choose File</button>
+                  <span class="file-upload-label" id="lbl-12-marksheet">No file chosen</span>
+                  <a id="link-12-marksheet" class="file-view-link hidden" target="_blank">View ↗</a>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Certificate <span class="optional">(PDF/Image)</span></label>
+                <div class="file-upload-wrap">
+                  <input type="file" id="prof-12-cert" accept=".pdf,image/*" class="hidden" onchange="handleFileSelect('prof-12-cert','lbl-12-cert')" />
+                  <button type="button" class="btn-file-upload" onclick="document.getElementById('prof-12-cert').click()">📎 Choose File</button>
+                  <span class="file-upload-label" id="lbl-12-cert">No file chosen</span>
+                  <a id="link-12-cert" class="file-view-link hidden" target="_blank">View ↗</a>
+                </div>
+              </div>
+            </div>
 
             <!-- 10th -->
             <h4 class="profile-subsection-title">10th Standard</h4>
@@ -476,6 +544,26 @@
                 <input type="number" id="prof-10-passout" placeholder="e.g. 2020" min="1990" max="2099" />
               </div>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Marksheet <span class="optional">(PDF/Image)</span></label>
+                <div class="file-upload-wrap">
+                  <input type="file" id="prof-10-marksheet" accept=".pdf,image/*" class="hidden" onchange="handleFileSelect('prof-10-marksheet','lbl-10-marksheet')" />
+                  <button type="button" class="btn-file-upload" onclick="document.getElementById('prof-10-marksheet').click()">📎 Choose File</button>
+                  <span class="file-upload-label" id="lbl-10-marksheet">No file chosen</span>
+                  <a id="link-10-marksheet" class="file-view-link hidden" target="_blank">View ↗</a>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Certificate <span class="optional">(PDF/Image)</span></label>
+                <div class="file-upload-wrap">
+                  <input type="file" id="prof-10-cert" accept=".pdf,image/*" class="hidden" onchange="handleFileSelect('prof-10-cert','lbl-10-cert')" />
+                  <button type="button" class="btn-file-upload" onclick="document.getElementById('prof-10-cert').click()">📎 Choose File</button>
+                  <span class="file-upload-label" id="lbl-10-cert">No file chosen</span>
+                  <a id="link-10-cert" class="file-view-link hidden" target="_blank">View ↗</a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div id="profile-msg" class="form-success hidden"></div>
@@ -485,6 +573,10 @@
 
       <!-- COURSES TAB -->
       <section id="tab-courses" class="dash-tab">
+        <div id="profile-incomplete-banner" class="profile-incomplete-banner hidden">
+          ⚠️ <strong>Profile Incomplete.</strong> Please complete your profile before enrolling in a course.
+          <a href="#" onclick="showStudentTab('profile');return false;" class="banner-link">Go to My Profile →</a>
+        </div>
         <div class="tab-controls">
           <input type="text" id="course-search" class="search-input" placeholder="Search courses by name or code…" oninput="filterCourses()" />
           <select id="course-dept-filter" class="filter-select" onchange="filterCourses()">
@@ -597,6 +689,7 @@
             <option>Undergraduate</option>
             <option>Postgraduate</option>
           </select>
+          <button class="btn-sort" id="adm-rank-sort-btn" onclick="sortPendingByRank()">🏆 Rank</button>
         </div>
         <div class="stats-row">
           <div class="stat-card">
